@@ -90,4 +90,78 @@ public class EstateAgencyTests
         Assert.Contains("Петрова Анна Сергеевна", buyerNames);
         Assert.Contains("Иванов Иван Иванович", sellerNames);
     }
+
+    /// <summary>
+    /// Тест 3: Вывести информацию о количестве заявок по каждому типу недвижимости
+    /// </summary>
+    [Fact]
+    public void GetRequestsByPropertyTypeReturnsCorrectCounts()
+    {
+        var requestsByType = _requests
+            .GroupBy(r => r.Property.Type)
+            .Select(g => new { PropertyType = g.Key, Count = g.Count() })
+            .ToDictionary(x => x.PropertyType, x => x.Count);
+
+        Assert.Equal(5, requestsByType.Count);
+
+        var actualApartmentCount = _requests.Count(r => r.Property.Type == PropertyType.Apartment);
+        var actualHouseCount = _requests.Count(r => r.Property.Type == PropertyType.House);
+        var actualCommercialCount = _requests.Count(r => r.Property.Type == PropertyType.Commercial);
+        var actualLandCount = _requests.Count(r => r.Property.Type == PropertyType.Land);
+        var actualVillaCount = _requests.Count(r => r.Property.Type == PropertyType.Villa);
+
+        Assert.Equal(actualApartmentCount, requestsByType[PropertyType.Apartment]);
+        Assert.Equal(actualHouseCount, requestsByType[PropertyType.House]);
+        Assert.Equal(actualCommercialCount, requestsByType[PropertyType.Commercial]);
+        Assert.Equal(actualLandCount, requestsByType[PropertyType.Land]);
+        Assert.Equal(actualVillaCount, requestsByType[PropertyType.Villa]);
+    }
+
+    /// <summary>
+    /// Тест 4: Вывести информацию о клиентах, открывших заявки с минимальной стоимостью
+    /// </summary>
+    [Fact]
+    public void GetClientsWithMinAmountRequestsReturnsCorrectClients()
+    {
+        var minPurchaseAmount = _requests
+            .Where(r => r.Type == RequestType.Purchase)
+            .Min(r => r.Amount);
+
+        var minSaleAmount = _requests
+            .Where(r => r.Type == RequestType.Sale)
+            .Min(r => r.Amount);
+
+        var clients = _requests
+            .Where(r => (r.Type == RequestType.Purchase && r.Amount == minPurchaseAmount) ||
+                       (r.Type == RequestType.Sale && r.Amount == minSaleAmount))
+            .Select(r => r.Client)
+            .Distinct()
+            .ToList();
+
+        Assert.Equal(2, clients.Count);
+        Assert.Contains(clients, c => c.FullName == "Петрова Анна Сергеевна");
+        Assert.Contains(clients, c => c.FullName == "Федоров Дмитрий Николаевич");
+    }
+
+    /// <summary>
+    /// Тест 5: Вывести сведения о всех клиентах, ищущих недвижимость заданного типа, упорядочить по ФИО
+    /// </summary>
+    [Fact]
+    public void GetClientsByPropertyTypeReturnsSortedClients()
+    {
+        var propertyType = PropertyType.Apartment;
+
+        var clients = _requests
+            .Where(r => r.Type == RequestType.Purchase &&
+                       r.Property.Type == propertyType)
+            .Select(r => r.Client)
+            .Distinct()
+            .OrderBy(c => c.FullName)
+            .ToList();
+
+        Assert.Equal(3, clients.Count);
+        Assert.Equal("Козлова Мария Владимировна", clients[0].FullName);
+        Assert.Equal("Петрова Анна Сергеевна", clients[1].FullName);
+        Assert.Equal("Сидоров Алексей Петрович", clients[2].FullName);
+    }
 }
