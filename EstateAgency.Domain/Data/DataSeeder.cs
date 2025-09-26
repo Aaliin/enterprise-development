@@ -275,4 +275,177 @@ public static class DataSeeder
             }
         };
     }
+
+    /// <summary>
+    /// Заполняет базу данных тестовыми заявками
+    /// </summary>
+    public static List<Request> GetTestRequests(List<Client> clients, List<Property> properties)
+    {
+        return new List<Request>
+        {
+            // Заявки на январь 2024 
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[0].Id,
+                PropertyId = properties[0].Id,
+                Type = RequestType.Sale,
+                Amount = 8500000m,
+                CreatedDate = new DateTime(2024, 1, 15)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[1].Id,
+                PropertyId = properties[0].Id,
+                Type = RequestType.Purchase,
+                Amount = 8200000m,
+                CreatedDate = new DateTime(2024, 1, 20)
+            },
+
+            // Заявки на февраль 2024
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[2].Id,
+                PropertyId = properties[1].Id,
+                Type = RequestType.Sale,
+                Amount = 12000000m,
+                CreatedDate = new DateTime(2024, 2, 10)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[0].Id,
+                PropertyId = properties[4].Id,
+                Type = RequestType.Sale,
+                Amount = 18500000m,
+                CreatedDate = new DateTime(2024, 2, 15)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[3].Id,
+                PropertyId = properties[1].Id,
+                Type = RequestType.Purchase,
+                Amount = 11500000m,
+                CreatedDate = new DateTime(2024, 2, 20)
+            },
+
+            // Заявки на март 2024
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[4].Id,
+                PropertyId = properties[9].Id,
+                Type = RequestType.Sale,
+                Amount = 5000000m,
+                CreatedDate = new DateTime(2024, 3, 1)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[1].Id,
+                PropertyId = properties[4].Id,
+                Type = RequestType.Purchase,
+                Amount = 18000000m,
+                CreatedDate = new DateTime(2024, 3, 5)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[2].Id,
+                PropertyId = properties[0].Id,
+                Type = RequestType.Purchase,
+                Amount = 8300000m,
+                CreatedDate = new DateTime(2024, 3, 10)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[3].Id,
+                PropertyId = properties[7].Id,
+                Type = RequestType.Sale,
+                Amount = 25000000m,
+                CreatedDate = new DateTime(2024, 3, 15)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[4].Id,
+                PropertyId = properties[7].Id,
+                Type = RequestType.Purchase,
+                Amount = 24500000m,
+                CreatedDate = new DateTime(2024, 3, 20)
+            },
+
+            // Заявки на апрель 2024
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[5].Id,
+                PropertyId = properties[2].Id,
+                Type = RequestType.Sale,
+                Amount = 7500000m,
+                CreatedDate = new DateTime(2024, 4, 1)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[6].Id,
+                PropertyId = properties[10].Id,
+                Type = RequestType.Sale,
+                Amount = 50000000m,
+                CreatedDate = new DateTime(2024, 4, 5)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[7].Id,
+                PropertyId = properties[5].Id,
+                Type = RequestType.Sale,
+                Amount = 15000000m,
+                CreatedDate = new DateTime(2024, 4, 10)
+            },
+            new()
+            {
+                Id = _requestId++,
+                ClientId = clients[8].Id,
+                PropertyId = properties[6].Id,
+                Type = RequestType.Purchase,
+                Amount = 9500000m,
+                CreatedDate = new DateTime(2024, 4, 15)
+            }
+        };
+    }
+
+    /// <summary>
+    /// Создает полный набор тестовых данных (клиенты, недвижимость, заявки)
+    /// </summary>
+    public static (List<Client> clients, List<Property> properties, List<Request> requests) GetCompleteTestData()
+    {
+        var clients = GetTestClients();
+        var properties = GetTestProperties();
+        var requests = GetTestRequests(clients, properties);
+
+        return (clients, properties, requests);
+    }
+
+    /// <summary>
+    /// Заполняет DbContext тестовыми данными
+    /// </summary>
+    public static void SeedDatabase(Microsoft.EntityFrameworkCore.DbContext context)
+    {
+        if (context.Set<Client>().Any())
+            return;
+
+        var (clients, properties, requests) = GetCompleteTestData();
+
+        context.Set<Client>().AddRange(clients);
+        context.Set<Property>().AddRange(properties);
+        context.SaveChanges(); 
+
+        context.Set<Request>().AddRange(requests);
+        context.SaveChanges();
+    }
 }
