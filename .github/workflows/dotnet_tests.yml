@@ -21,10 +21,10 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore EstateAgency.sln
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build EstateAgency.sln --no-restore
+        run: dotnet build --no-restore
 
       - name: Run tests
-        run: dotnet test EstateAgency.Tests/EstateAgency.Tests.csproj --no-build
+        run: dotnet test --no-build

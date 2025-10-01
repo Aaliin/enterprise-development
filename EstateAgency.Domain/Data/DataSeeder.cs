@@ -1,9 +1,4 @@
 ﻿using EstateAgency.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EstateAgency.Domain.Data;
 
@@ -19,10 +14,10 @@ public static class DataSeeder
     /// <summary>
     /// Заполняет базу данных тестовыми клиентами
     /// </summary>
-    public static List<Client> GetTestClients()
+    private static List<Client> GetTestClients()
     {
-        return new List<Client>
-        {
+        return
+        [
             new()
             {
                 Id = _clientId++,
@@ -100,17 +95,16 @@ public static class DataSeeder
                 PassportNumber = "4511 112233",
                 PhoneNumber = "+7-999-112-23-34"
             }
-        };
+        ];
     }
 
     /// <summary>
     /// Заполняет базу данных тестовыми объектами недвижимости
     /// </summary>
-    public static List<Property> GetTestProperties()
+    private static List<Property> GetTestProperties()
     {
-        return new List<Property>
-        {
-            // Квартиры (4 экземпляра)
+        return
+        [
             new()
             {
                 Id = _propertyId++,
@@ -168,7 +162,6 @@ public static class DataSeeder
                 HasEncumbrances = false
             },
 
-            // Дома (3 экземпляра)
             new()
             {
                 Id = _propertyId++,
@@ -212,7 +205,6 @@ public static class DataSeeder
                 HasEncumbrances = false
             },
 
-            // Коммерческая недвижимость (2 экземпляра)
             new()
             {
                 Id = _propertyId++,
@@ -242,7 +234,6 @@ public static class DataSeeder
                 HasEncumbrances = true
             },
 
-            // Земельные участки (1 экземпляр)
             new()
             {
                 Id = _propertyId++,
@@ -258,7 +249,6 @@ public static class DataSeeder
                 HasEncumbrances = true
             },
 
-            // Виллы (1 экземпляр)
             new()
             {
                 Id = _propertyId++,
@@ -273,22 +263,23 @@ public static class DataSeeder
                 Floor = 1,
                 HasEncumbrances = false
             }
-        };
+        ];
     }
 
     /// <summary>
     /// Заполняет базу данных тестовыми заявками
     /// </summary>
-    public static List<Request> GetTestRequests(List<Client> clients, List<Property> properties)
+    private static List<Request> GetTestRequests(List<Client> clients, List<Property> properties)
     {
-        return new List<Request>
-        {
-            // Заявки на январь 2024 
+        return
+        [
             new()
             {
                 Id = _requestId++,
                 ClientId = clients[0].Id,
+                Client = clients[0],
                 PropertyId = properties[0].Id,
+                Property = properties[0],
                 Type = RequestType.Sale,
                 Amount = 8500000m,
                 CreatedDate = new DateTime(2024, 1, 15)
@@ -297,18 +288,20 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[1].Id,
+                Client = clients[1],
                 PropertyId = properties[0].Id,
+                Property = properties[0],
                 Type = RequestType.Purchase,
                 Amount = 8200000m,
                 CreatedDate = new DateTime(2024, 1, 20)
             },
-
-            // Заявки на февраль 2024
             new()
             {
                 Id = _requestId++,
                 ClientId = clients[2].Id,
+                Client = clients[2],
                 PropertyId = properties[1].Id,
+                Property = properties[1],
                 Type = RequestType.Sale,
                 Amount = 12000000m,
                 CreatedDate = new DateTime(2024, 2, 10)
@@ -317,7 +310,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[0].Id,
+                Client = clients[0],
                 PropertyId = properties[4].Id,
+                Property = properties[4],
                 Type = RequestType.Sale,
                 Amount = 18500000m,
                 CreatedDate = new DateTime(2024, 2, 15)
@@ -326,18 +321,20 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[3].Id,
+                Client = clients[3],
                 PropertyId = properties[1].Id,
+                Property = properties[1],
                 Type = RequestType.Purchase,
                 Amount = 11500000m,
                 CreatedDate = new DateTime(2024, 2, 20)
             },
-
-            // Заявки на март 2024
             new()
             {
                 Id = _requestId++,
                 ClientId = clients[4].Id,
+                Client = clients[4],
                 PropertyId = properties[9].Id,
+                Property = properties[9],
                 Type = RequestType.Sale,
                 Amount = 5000000m,
                 CreatedDate = new DateTime(2024, 3, 1)
@@ -346,7 +343,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[1].Id,
+                Client = clients[1],
                 PropertyId = properties[4].Id,
+                Property = properties[4],
                 Type = RequestType.Purchase,
                 Amount = 18000000m,
                 CreatedDate = new DateTime(2024, 3, 5)
@@ -355,7 +354,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[2].Id,
+                Client = clients[2],
                 PropertyId = properties[0].Id,
+                Property = properties[0],
                 Type = RequestType.Purchase,
                 Amount = 8300000m,
                 CreatedDate = new DateTime(2024, 3, 10)
@@ -364,7 +365,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[3].Id,
+                Client = clients[3],
                 PropertyId = properties[7].Id,
+                Property = properties[7],
                 Type = RequestType.Sale,
                 Amount = 25000000m,
                 CreatedDate = new DateTime(2024, 3, 15)
@@ -373,18 +376,20 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[4].Id,
+                Client = clients[4],
                 PropertyId = properties[7].Id,
+                Property = properties[7],
                 Type = RequestType.Purchase,
                 Amount = 24500000m,
                 CreatedDate = new DateTime(2024, 3, 20)
             },
-
-            // Заявки на апрель 2024
             new()
             {
                 Id = _requestId++,
                 ClientId = clients[5].Id,
+                Client = clients[5],
                 PropertyId = properties[2].Id,
+                Property = properties[2],
                 Type = RequestType.Sale,
                 Amount = 7500000m,
                 CreatedDate = new DateTime(2024, 4, 1)
@@ -393,7 +398,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[6].Id,
+                Client = clients[6],
                 PropertyId = properties[10].Id,
+                Property = properties[10],
                 Type = RequestType.Sale,
                 Amount = 50000000m,
                 CreatedDate = new DateTime(2024, 4, 5)
@@ -402,7 +409,9 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[7].Id,
+                Client = clients[7],
                 PropertyId = properties[5].Id,
+                Property = properties[5],
                 Type = RequestType.Sale,
                 Amount = 15000000m,
                 CreatedDate = new DateTime(2024, 4, 10)
@@ -411,12 +420,14 @@ public static class DataSeeder
             {
                 Id = _requestId++,
                 ClientId = clients[8].Id,
+                Client = clients[8],
                 PropertyId = properties[6].Id,
+                Property = properties[6],
                 Type = RequestType.Purchase,
                 Amount = 9500000m,
                 CreatedDate = new DateTime(2024, 4, 15)
             }
-        };
+        ];
     }
 
     /// <summary>
@@ -428,24 +439,12 @@ public static class DataSeeder
         var properties = GetTestProperties();
         var requests = GetTestRequests(clients, properties);
 
+        foreach (var request in requests)
+        {
+            request.Client.Requests.Add(request);
+            request.Property.Requests.Add(request);
+        }
+
         return (clients, properties, requests);
-    }
-
-    /// <summary>
-    /// Заполняет DbContext тестовыми данными
-    /// </summary>
-    public static void SeedDatabase(Microsoft.EntityFrameworkCore.DbContext context)
-    {
-        if (context.Set<Client>().Any())
-            return;
-
-        var (clients, properties, requests) = GetCompleteTestData();
-
-        context.Set<Client>().AddRange(clients);
-        context.Set<Property>().AddRange(properties);
-        context.SaveChanges(); 
-
-        context.Set<Request>().AddRange(requests);
-        context.SaveChanges();
     }
 }
