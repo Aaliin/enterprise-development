@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EstateAgency.Domain;
 
@@ -21,22 +16,22 @@ public class Client
     /// Полное имя клиента (ФИО)
     /// </summary>
     [Required(ErrorMessage = "ФИО клиента обязательно")]
-    public string FullName { get; set; } = string.Empty;
+    public required string FullName { get; set; }
 
     /// <summary>
     /// Номер паспорта клиента
     /// </summary>
     [Required(ErrorMessage = "Номер паспорта обязателен")]
-    public string PassportNumber { get; set; } = string.Empty;
+    public required string PassportNumber { get; set; }
 
     /// <summary>
     /// Контактный телефон клиента
     /// </summary>
     [Required(ErrorMessage = "Контактный телефон обязателен")]
-    public string PhoneNumber { get; set; } = string.Empty;
+    public required string PhoneNumber { get; set; }
 
     /// <summary>
     /// Коллекция заявок, созданных данным клиентом
     /// </summary>
-    public List<Request> Requests { get; set; } = new();
+    public List<Request> Requests { get; set; } = [];
 }

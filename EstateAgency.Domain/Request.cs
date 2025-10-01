@@ -1,10 +1,5 @@
-﻿using EstateAgency.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EstateAgency.Domain.Enum; 
+using System.ComponentModel.DataAnnotations; 
 
 namespace EstateAgency.Domain;
 
@@ -23,39 +18,39 @@ public class Request
     /// Идентификатор клиента, создавшего заявку
     /// </summary>
     [Required(ErrorMessage = "Клиент обязателен")]
-    public int ClientId { get; set; }
+    public required int ClientId { get; set; }
 
     /// <summary>
     /// Навигационное свойство для клиента
     /// </summary>
-    public Client? Client { get; set; }
+    public required Client Client { get; set; }
 
     /// <summary>
     /// Идентификатор объекта недвижимости
     /// </summary>
     [Required(ErrorMessage = "Объект недвижимости обязателен")]
-    public int PropertyId { get; set; }
+    public required int PropertyId { get; set; }
 
     /// <summary>
     /// Навигационное свойство для объекта недвижимости
     /// </summary>
-    public Property? Property { get; set; }
+    public required Property Property { get; set; }
 
     /// <summary>
     /// Тип заявки 
     /// </summary>
     [Required(ErrorMessage = "Тип заявки обязателен")]
-    public RequestType Type { get; set; }
+    public required RequestType Type { get; set; }
 
     /// <summary>
     /// Денежная сумма по заявке
     /// </summary>
     [Required(ErrorMessage = "Сумма заявки обязательна")]
-    public decimal Amount { get; set; }
+    public required decimal Amount { get; set; }
 
     /// <summary>
     /// Дата и время создания заявки
     /// </summary>
     [Required(ErrorMessage = "Дата заявки обязательна")]
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }

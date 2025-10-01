@@ -1,10 +1,5 @@
-﻿using EstateAgency.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EstateAgency.Domain.Enum; 
+using System.ComponentModel.DataAnnotations; 
 
 namespace EstateAgency.Domain;
 
@@ -22,43 +17,43 @@ public class Property
     /// Тип объекта недвижимости 
     /// </summary>
     [Required(ErrorMessage = "Тип недвижимости обязателен")]
-    public PropertyType Type { get; set; }
+    public required  PropertyType Type { get; set; }
 
     /// <summary>
     /// Назначение объекта 
     /// </summary>
     [Required(ErrorMessage = "Назначение недвижимости обязательно")]
-    public PropertyPurpose Purpose { get; set; }
+    public required PropertyPurpose Purpose { get; set; }
 
     /// <summary>
     /// Кадастровый номер объекта
     /// </summary>
     [Required(ErrorMessage = "Кадастровый номер обязателен")]
-    public string CadastralNumber { get; set; } = string.Empty;
+    public required string CadastralNumber { get; set; }
 
     /// <summary>
     /// Адрес расположения объекта
     /// </summary>
     [Required(ErrorMessage = "Адрес обязателен")]
-    public string Address { get; set; } = string.Empty;
+    public required string Address { get; set; }
 
     /// <summary>
     /// Общее количество этажей в здании
     /// </summary>
     [Required(ErrorMessage = "Этажность обязательна")]
-    public int Floors { get; set; }
+    public required int Floors { get; set; }
 
     /// <summary>
     /// Общая площадь объекта в квадратных метрах
     /// </summary>
     [Required(ErrorMessage = "Общая площадь обязательна")]
-    public decimal TotalArea { get; set; }
+    public required decimal TotalArea { get; set; }
 
     /// <summary>
     /// Количество комнат в объекте
     /// </summary>
     [Required(ErrorMessage = "Количество комнат обязательно")]
-    public int Rooms { get; set; }
+    public required int Rooms { get; set; }
 
     /// <summary>
     /// Высота потолков в метрах
@@ -74,10 +69,10 @@ public class Property
     /// Наличие задолжностей
     /// </summary>
     [Required(ErrorMessage = "Наличие задолжностей обязательно")]
-    public bool HasEncumbrances { get; set; }
+    public required bool HasEncumbrances { get; set; }
 
     /// <summary>
     /// Коллекция заявок, связанных с данным объектом недвижимости
     /// </summary>
-    public List<Request> Requests { get; set; } = new();
+    public List<Request> Requests { get; set; } = [];
 }

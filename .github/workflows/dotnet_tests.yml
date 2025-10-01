@@ -27,4 +27,4 @@ jobs:
         run: dotnet build EstateAgency.sln --no-restore
 
       - name: Run tests
-        run: dotnet test EstateAgency.Tests/EstateAgency.csproj --no-build
+        run: dotnet test EstateAgency.Tests/EstateAgency.Tests.csproj --no-build
