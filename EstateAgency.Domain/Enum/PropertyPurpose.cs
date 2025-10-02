@@ -5,8 +5,23 @@
 /// </summary>
 public enum PropertyPurpose
 {
-    Residential,    // Жилое 
-    Commercial,     // Коммерческое 
-    Industrial,     // Промышленное 
-    Agricultural    // Сельскохозяйственное 
+    /// <summary>
+    /// Жилое
+    /// </summary>
+    Residential,
+
+    /// <summary>
+    /// Коммерческое
+    /// </summary>
+    Commercial,
+
+    /// <summary>
+    /// Промышленное
+    /// </summary>
+    Industrial,
+
+    /// <summary>
+    /// Сельскохозяйственное
+    /// </summary>
+    Agricultural
 }

@@ -5,9 +5,28 @@
 /// </summary>
 public enum PropertyType
 {
-    Apartment,      // Квартира
-    House,          // Дом
-    Commercial,     // Коммерческая недвижимость
-    Land,           // Земельный участок
-    Villa           // Вилла
+    /// <summary>
+    /// Квартира
+    /// </summary>
+    Apartment,
+
+    /// <summary>
+    /// Дом
+    /// </summary>
+    House,
+
+    /// <summary>
+    /// Коммерческая недвижимость
+    /// </summary>
+    Commercial,
+
+    /// <summary>
+    /// Земельный участок
+    /// </summary>
+    Land,
+
+    /// <summary>
+    /// Вилла
+    /// </summary>
+    Villa
 }

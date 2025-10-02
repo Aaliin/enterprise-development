@@ -5,6 +5,13 @@
 /// </summary>
 public enum RequestType
 {
-    Purchase,       // Покупка недвижимости
-    Sale            // Продажа недвижимости
+    /// <summary>
+    /// Покупка недвижимости
+    /// </summary>
+    Purchase,
+
+    /// <summary>
+    /// Продажа недвижимости
+    /// </summary>
+    Sale
 }
