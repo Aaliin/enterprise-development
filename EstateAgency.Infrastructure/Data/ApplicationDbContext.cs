@@ -8,7 +8,8 @@ namespace EstateAgency.Infrastructure.Data;
 /// <summary> 
 /// Содержит конфигурацию модели данных и логику заполнения начальными данными
 /// </summary>
-public class ApplicationDbContext : DbContext
+/// <param name="options">Опции конфигурации DbContext</param>
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     /// <summary>
     /// Коллекция клиентов риэлторского агентства
@@ -24,12 +25,6 @@ public class ApplicationDbContext : DbContext
     /// Коллекция заявок от клиентов
     /// </summary>
     public DbSet<Request> Requests { get; set; }
-
-    /// <summary>
-    /// Инициализирует новый экземпляр контекста базы данных
-    /// </summary>
-    /// <param name="options">Опции конфигурации DbContext</param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     /// <summary>
     /// Настраивает модель данных при создании контекста 

@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EstateAgency.Application\EstateAgency.Application.csproj" />
     <ProjectReference Include="..\EstateAgency.Domain\EstateAgency.Domain.csproj" />
+    <ProjectReference Include="..\EstateAgency.Infrastructure\EstateAgency.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
