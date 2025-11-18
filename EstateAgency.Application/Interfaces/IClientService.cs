@@ -1,7 +1,6 @@
 ﻿using EstateAgency.Application.DTOs;
-using EstateAgency.Application.DTOs.Clients;
 
-namespace EstateAgency.Application.Interfaces.Services;
+namespace EstateAgency.Application.Interfaces;
 
 /// <summary>
 /// Интерфейс сервиса для работы с клиентами 
@@ -23,14 +22,14 @@ public interface IClientService
     /// Создает нового клиента
     /// </summary>
     /// <param name="clientDto">DTO для создания клиента</param> 
-    public Task<ClientDto> CreateClientAsync(ClientCreateDto clientDto);
+    public Task<ClientDto> CreateClientAsync(CreateClientDto clientDto);
 
     /// <summary>
     /// Обновляет данные клиента
     /// </summary>
     /// <param name="id">Идентификатор клиента</param>
     /// <param name="clientDto">DTO с обновленными данными</param> 
-    public Task<ClientDto?> UpdateClientAsync(int id, ClientUpdateDto clientDto);
+    public Task<ClientDto?> UpdateClientAsync(int id, CreateClientDto clientDto);
 
     /// <summary>
     /// Удаляет клиента по идентификатору

@@ -1,8 +1,7 @@
-﻿using EstateAgency.Application.DTOs.Clients;
-using EstateAgency.Application.Exceptions;
-using EstateAgency.Application.Interfaces.Repositories;
-using EstateAgency.Application.Interfaces.Services;
-using EstateAgency.Domain;
+﻿using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Interfaces;
+using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Interfaces;
 
 namespace EstateAgency.Application.Services;
 
@@ -10,16 +9,14 @@ namespace EstateAgency.Application.Services;
 /// Реализует бизнес-логику работы с клиентскими данными
 /// </summary>
 /// <param name="repository">Репозиторий для доступа к данным агентства недвижимости</param>
-public class ClientService(IEstateAgencyRepository repository) : IClientService
+public class ClientService(IClientRepository repository) : IClientService
 {
-    private readonly IEstateAgencyRepository _repository = repository;
-
     /// <summary>
     /// Получает список всех клиентов
     /// </summary>
     public async Task<List<ClientDto>> GetAllClientsAsync()
     {
-        var clients = await _repository.GetClientsAsync();
+        var clients = await repository.GetAllAsync();
         return [.. clients.Select(c => new ClientDto
         {
             Id = c.Id,
@@ -35,7 +32,7 @@ public class ClientService(IEstateAgencyRepository repository) : IClientService
     /// <param name="id">Идентификатор клиента</param> 
     public async Task<ClientDto?> GetClientByIdAsync(int id)
     {
-        var client = await _repository.GetClientByIdAsync(id);
+        var client = await repository.GetByIdAsync(id);
         return client is null ? null : new ClientDto
         {
             Id = client.Id,
@@ -49,7 +46,7 @@ public class ClientService(IEstateAgencyRepository repository) : IClientService
     /// Создает нового клиента
     /// </summary>
     /// <param name="clientDto">DTO с данными для создания клиента</param> 
-    public async Task<ClientDto> CreateClientAsync(ClientCreateDto clientDto)
+    public async Task<ClientDto> CreateClientAsync(CreateClientDto clientDto)
     {
         var client = new Client
         {
@@ -58,7 +55,7 @@ public class ClientService(IEstateAgencyRepository repository) : IClientService
             PhoneNumber = clientDto.PhoneNumber
         };
 
-        var createdClient = await _repository.AddClientAsync(client);
+        var createdClient = await repository.AddAsync(client);
 
         return new ClientDto
         {
@@ -74,16 +71,16 @@ public class ClientService(IEstateAgencyRepository repository) : IClientService
     /// </summary>
     /// <param name="id">Идентификатор клиента для обновления</param>
     /// <param name="clientDto">DTO с обновленными данными клиента</param> 
-    public async Task<ClientDto?> UpdateClientAsync(int id, ClientUpdateDto clientDto)
+    public async Task<ClientDto?> UpdateClientAsync(int id, CreateClientDto clientDto)
     {
-        var existingClient = await _repository.GetClientByIdAsync(id)
-            ?? throw new EntityNotFoundException("Client", id);
+        var existingClient = await repository.GetByIdAsync(id);
+        if (existingClient == null) return null;
 
         existingClient.FullName = clientDto.FullName;
         existingClient.PassportNumber = clientDto.PassportNumber;
         existingClient.PhoneNumber = clientDto.PhoneNumber;
 
-        var updatedClient = await _repository.UpdateClientAsync(existingClient);
+        var updatedClient = await repository.UpdateAsync(existingClient);
 
         return updatedClient is null ? null : new ClientDto
         {
@@ -100,6 +97,6 @@ public class ClientService(IEstateAgencyRepository repository) : IClientService
     /// <param name="id">Идентификатор клиента для удаления</param> 
     public async Task<bool> DeleteClientAsync(int id)
     {
-        return await _repository.DeleteClientAsync(id);
+        return await repository.DeleteAsync(id);
     }
 }

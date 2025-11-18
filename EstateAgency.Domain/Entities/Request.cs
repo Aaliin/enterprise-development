@@ -1,7 +1,7 @@
-﻿using EstateAgency.Domain.Enum; 
-using System.ComponentModel.DataAnnotations; 
+﻿using EstateAgency.Domain.Enum;
+using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Domain;
+namespace EstateAgency.Domain.Entities;
 
 /// <summary>
 /// Класс, представляющий заявку от клиента
@@ -23,7 +23,7 @@ public class Request
     /// <summary>
     /// Навигационное свойство для клиента
     /// </summary>
-    public required Client Client { get; set; }
+    public Client? Client { get; set; }
 
     /// <summary>
     /// Идентификатор объекта недвижимости
@@ -34,7 +34,7 @@ public class Request
     /// <summary>
     /// Навигационное свойство для объекта недвижимости
     /// </summary>
-    public required Property Property { get; set; }
+    public Property? Property { get; set; }
 
     /// <summary>
     /// Тип заявки 

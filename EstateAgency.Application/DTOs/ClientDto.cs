@@ -1,11 +1,37 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Application.DTOs.Clients;
+namespace EstateAgency.Application.DTOs;
+
+/// <summary>
+/// Содержит основные данные клиента и список связанных заявок
+/// </summary>
+public class ClientDto
+{
+    /// <summary>
+    /// Уникальный идентификатор клиента
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Полное имя клиента в формате "Фамилия Имя Отчество"
+    /// </summary>
+    public string FullName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Номер паспорта клиента в формате "XXXX XXXXXX"
+    /// </summary>
+    public string PassportNumber { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Контактный телефон клиента в международном формате
+    /// </summary>
+    public string PhoneNumber { get; set; } = string.Empty;
+}
 
 /// <summary>
 /// Содержит валидационные правила для входящих данных
 /// </summary>
-public class ClientCreateDto
+public class CreateClientDto
 {
     /// <summary>
     /// Полное имя клиента. Обязательное поле, максимум 100 символов

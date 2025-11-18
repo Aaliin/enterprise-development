@@ -1,5 +1,5 @@
-﻿using EstateAgency.Application.DTOs.Properties;
-using EstateAgency.Application.Interfaces.Services;
+﻿using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Interfaces; 
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateAgency.API.Controllers;
@@ -39,7 +39,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     /// </summary>
     /// <param name="propertyDto">Данные для создания объекта недвижимости</param>
     [HttpPost]
-    public async Task<ActionResult<PropertyDto>> CreateProperty(PropertyCreateDto propertyDto)
+    public async Task<ActionResult<PropertyDto>> CreateProperty(CreatePropertyDto propertyDto)
     {
         try
         {
@@ -62,7 +62,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     /// <param name="id">Идентификатор объекта недвижимости</param>
     /// <param name="propertyDto">Обновленные данные объекта недвижимости</param>
     [HttpPut("{id}")]
-    public async Task<ActionResult<PropertyDto>> UpdateProperty(int id, PropertyUpdateDto propertyDto)
+    public async Task<ActionResult<PropertyDto>> UpdateProperty(int id, CreatePropertyDto propertyDto)
     {
         try
         {

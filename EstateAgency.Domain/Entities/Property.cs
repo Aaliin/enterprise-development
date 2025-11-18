@@ -1,7 +1,7 @@
-﻿using EstateAgency.Domain.Enum; 
-using System.ComponentModel.DataAnnotations; 
+﻿using EstateAgency.Domain.Enum;
+using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Domain;
+namespace EstateAgency.Domain.Entities;
 
 /// <summary>
 /// Класс, представляющий объект недвижимости

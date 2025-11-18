@@ -1,6 +1,7 @@
-﻿using EstateAgency.Domain.Enum;
+﻿using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Enum;
 
-namespace EstateAgency.Domain.Data;
+namespace EstateAgency.Infrastructure.Data;
 
 /// <summary>
 /// Класс для заполнения базы данных тестовыми данными
@@ -14,7 +15,7 @@ public static class DataSeeder
     /// <summary>
     /// Заполняет базу данных тестовыми клиентами
     /// </summary>
-    private static List<Client> GetTestClients()
+    public static List<Client> GetTestClients()
     {
         return
         [
@@ -101,7 +102,7 @@ public static class DataSeeder
     /// <summary>
     /// Заполняет базу данных тестовыми объектами недвижимости
     /// </summary>
-    private static List<Property> GetTestProperties()
+    public static List<Property> GetTestProperties()
     {
         return
         [
@@ -269,7 +270,7 @@ public static class DataSeeder
     /// <summary>
     /// Заполняет базу данных тестовыми заявками
     /// </summary>
-    private static List<Request> GetTestRequests(List<Client> clients, List<Property> properties)
+    public static List<Request> GetTestRequests(List<Client> clients, List<Property> properties)
     {
         return
         [

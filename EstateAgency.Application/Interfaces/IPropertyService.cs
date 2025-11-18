@@ -1,7 +1,6 @@
 ﻿using EstateAgency.Application.DTOs;
-using EstateAgency.Application.DTOs.Properties;
 
-namespace EstateAgency.Application.Interfaces.Services;
+namespace EstateAgency.Application.Interfaces;
 
 /// <summary>
 /// Интерфейс сервиса для работы с объектами недвижимости
@@ -23,14 +22,14 @@ public interface IPropertyService
     /// Создает новый объект недвижимости
     /// </summary>
     /// <param name="propertyDto">DTO для создания объекта</param>
-    public Task<PropertyDto> CreatePropertyAsync(PropertyCreateDto propertyDto);
+    public Task<PropertyDto> CreatePropertyAsync(CreatePropertyDto propertyDto);
 
     /// <summary>
     /// Обновляет данные объекта недвижимости
     /// </summary>
     /// <param name="id">Идентификатор объекта</param>
     /// <param name="propertyDto">DTO с обновленными данными</param>
-    public Task<PropertyDto?> UpdatePropertyAsync(int id, PropertyUpdateDto propertyDto);
+    public Task<PropertyDto?> UpdatePropertyAsync(int id, CreatePropertyDto propertyDto);
 
     /// <summary>
     /// Удаляет объект недвижимости по идентификатору

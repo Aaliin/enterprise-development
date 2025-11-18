@@ -1,8 +1,7 @@
-﻿using EstateAgency.Application.DTOs.Properties;
-using EstateAgency.Application.Exceptions;
-using EstateAgency.Application.Interfaces.Repositories;
-using EstateAgency.Application.Interfaces.Services;
-using EstateAgency.Domain;
+﻿using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Interfaces;
+using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Interfaces;
 
 namespace EstateAgency.Application.Services;
 
@@ -10,16 +9,14 @@ namespace EstateAgency.Application.Services;
 /// Реализует бизнес-логику работы с каталогом недвижимости
 /// </summary>
 /// <param name="repository">Репозиторий для доступа к данным агентства недвижимости</param>
-public class PropertyService(IEstateAgencyRepository repository) : IPropertyService
+public class PropertyService(IPropertyRepository repository) : IPropertyService
 {
-    private readonly IEstateAgencyRepository _repository = repository;
-
     /// <summary>
     /// Получает список всех объектов недвижимости
     /// </summary>
     public async Task<List<PropertyDto>> GetAllPropertiesAsync()
     {
-        var properties = _repository.GetAllProperties();
+        var properties = await repository.GetAllAsync();
         return [.. properties.Select(p => new PropertyDto
         {
             Id = p.Id,
@@ -42,7 +39,8 @@ public class PropertyService(IEstateAgencyRepository repository) : IPropertyServ
     /// <param name="id">Идентификатор объекта недвижимости</param>
     public async Task<PropertyDto?> GetPropertyByIdAsync(int id)
     {
-        var property = _repository.GetPropertyById(id);
+        var property = await repository.GetByIdAsync(id);
+        if (property == null) return null; 
         return property is null ? null : new PropertyDto
         {
             Id = property.Id,
@@ -63,7 +61,7 @@ public class PropertyService(IEstateAgencyRepository repository) : IPropertyServ
     /// Создает новый объект недвижимости
     /// </summary>
     /// <param name="propertyDto">DTO с данными для создания объекта недвижимости</param> 
-    public async Task<PropertyDto> CreatePropertyAsync(PropertyCreateDto propertyDto)
+    public async Task<PropertyDto> CreatePropertyAsync(CreatePropertyDto propertyDto)
     {
         var property = new Property
         {
@@ -79,21 +77,21 @@ public class PropertyService(IEstateAgencyRepository repository) : IPropertyServ
             HasEncumbrances = propertyDto.HasEncumbrances
         };
 
-        _repository.AddProperty(property);
+        var createdProperty = await repository.AddAsync(property);
 
         return new PropertyDto
         {
-            Id = property.Id,
-            Type = property.Type,
-            Purpose = property.Purpose,
-            CadastralNumber = property.CadastralNumber,
-            Address = property.Address,
-            Floors = property.Floors,
-            TotalArea = property.TotalArea,
-            Rooms = property.Rooms,
-            CeilingHeight = property.CeilingHeight,
-            Floor = property.Floor,
-            HasEncumbrances = property.HasEncumbrances
+            Id = createdProperty.Id,
+            Type = createdProperty.Type,
+            Purpose = createdProperty.Purpose,
+            CadastralNumber = createdProperty.CadastralNumber,
+            Address = createdProperty.Address,
+            Floors = createdProperty.Floors,
+            TotalArea = createdProperty.TotalArea,
+            Rooms = createdProperty.Rooms,
+            CeilingHeight = createdProperty.CeilingHeight,
+            Floor = createdProperty.Floor,
+            HasEncumbrances = createdProperty.HasEncumbrances
         };
     }
 
@@ -102,38 +100,37 @@ public class PropertyService(IEstateAgencyRepository repository) : IPropertyServ
     /// </summary>
     /// <param name="id">Идентификатор объекта недвижимости для обновления</param>
     /// <param name="propertyDto">DTO с обновленными данными объекта недвижимости</param> 
-    public async Task<PropertyDto?> UpdatePropertyAsync(int id, PropertyUpdateDto propertyDto)
+    public async Task<PropertyDto?> UpdatePropertyAsync(int id, CreatePropertyDto propertyDto)
     {
-        var existingProperty = _repository.GetPropertyById(id)
-            ?? throw new EntityNotFoundException("Property", id);
+        var existingProperty = await repository.GetByIdAsync(id);
+        if (existingProperty == null) return null;
 
-        // Частичное обновление - обновляем только переданные поля
-        if (propertyDto.Type.HasValue) existingProperty.Type = propertyDto.Type.Value;
-        if (propertyDto.Purpose.HasValue) existingProperty.Purpose = propertyDto.Purpose.Value;
-        if (!string.IsNullOrEmpty(propertyDto.CadastralNumber)) existingProperty.CadastralNumber = propertyDto.CadastralNumber;
-        if (!string.IsNullOrEmpty(propertyDto.Address)) existingProperty.Address = propertyDto.Address;
-        if (propertyDto.Floors.HasValue) existingProperty.Floors = propertyDto.Floors.Value;
-        if (propertyDto.TotalArea.HasValue) existingProperty.TotalArea = propertyDto.TotalArea.Value;
-        if (propertyDto.Rooms.HasValue) existingProperty.Rooms = propertyDto.Rooms.Value;
-        if (propertyDto.CeilingHeight.HasValue) existingProperty.CeilingHeight = propertyDto.CeilingHeight.Value;
-        if (propertyDto.Floor.HasValue) existingProperty.Floor = propertyDto.Floor.Value;
-        if (propertyDto.HasEncumbrances.HasValue) existingProperty.HasEncumbrances = propertyDto.HasEncumbrances.Value;
+        existingProperty.Type = propertyDto.Type;
+        existingProperty.Purpose = propertyDto.Purpose;
+        existingProperty.CadastralNumber = propertyDto.CadastralNumber;
+        existingProperty.Address = propertyDto.Address;
+        existingProperty.Floors = propertyDto.Floors;
+        existingProperty.TotalArea = propertyDto.TotalArea;
+        existingProperty.Rooms = propertyDto.Rooms;
+        existingProperty.CeilingHeight = propertyDto.CeilingHeight;
+        existingProperty.Floor = propertyDto.Floor;
+        existingProperty.HasEncumbrances = propertyDto.HasEncumbrances;
 
-        _repository.UpdateProperty(existingProperty);
+        var updatedProperty = await repository.UpdateAsync(existingProperty); 
 
         return new PropertyDto
         {
-            Id = existingProperty.Id,
-            Type = existingProperty.Type,
-            Purpose = existingProperty.Purpose,
-            CadastralNumber = existingProperty.CadastralNumber,
-            Address = existingProperty.Address,
-            Floors = existingProperty.Floors,
-            TotalArea = existingProperty.TotalArea,
-            Rooms = existingProperty.Rooms,
-            CeilingHeight = existingProperty.CeilingHeight,
-            Floor = existingProperty.Floor,
-            HasEncumbrances = existingProperty.HasEncumbrances
+            Id = updatedProperty.Id,
+            Type = updatedProperty.Type,
+            Purpose = updatedProperty.Purpose,
+            CadastralNumber = updatedProperty.CadastralNumber,
+            Address = updatedProperty.Address,
+            Floors = updatedProperty.Floors,
+            TotalArea = updatedProperty.TotalArea,
+            Rooms = updatedProperty.Rooms,
+            CeilingHeight = updatedProperty.CeilingHeight,
+            Floor = updatedProperty.Floor,
+            HasEncumbrances = updatedProperty.HasEncumbrances
         };
     }
 
@@ -145,7 +142,7 @@ public class PropertyService(IEstateAgencyRepository repository) : IPropertyServ
     {
         try
         {
-            _repository.DeleteProperty(id);
+            var createdProperty = await repository.DeleteAsync(id);
             return true;
         }
         catch

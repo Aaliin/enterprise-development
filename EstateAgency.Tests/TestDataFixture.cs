@@ -1,5 +1,5 @@
-﻿using EstateAgency.Domain;
-using EstateAgency.Domain.Data;
+﻿using EstateAgency.Domain.Entities;
+using EstateAgency.Infrastructure.Data;
 
 namespace EstateAgency.Tests;
 

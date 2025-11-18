@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Domain;
+namespace EstateAgency.Domain.Entities;
 
 /// <summary>
 /// Класс, представляющий клиента 

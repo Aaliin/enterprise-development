@@ -1,5 +1,5 @@
-﻿using EstateAgency.Application.DTOs.Clients;
-using EstateAgency.Application.Interfaces.Services;
+﻿using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Interfaces; 
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateAgency.API.Controllers;
@@ -39,7 +39,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     /// </summary>
     /// <param name="clientDto">Данные для создания клиента</param>
     [HttpPost]
-    public async Task<ActionResult<ClientDto>> CreateClient(ClientCreateDto clientDto)
+    public async Task<ActionResult<ClientDto>> CreateClient(CreateClientDto clientDto)
     {
         try
         {
@@ -62,7 +62,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     /// <param name="id">Идентификатор клиента</param>
     /// <param name="clientDto">Обновленные данные клиента</param>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ClientDto>> UpdateClient(int id, ClientUpdateDto clientDto)
+    public async Task<ActionResult<ClientDto>> UpdateClient(int id, CreateClientDto clientDto)
     {
         try
         {
