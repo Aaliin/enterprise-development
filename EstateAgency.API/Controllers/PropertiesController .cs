@@ -11,15 +11,13 @@ namespace EstateAgency.API.Controllers;
 [Route("api/[controller]")]
 public class PropertiesController(IPropertyService propertyService) : ControllerBase
 {
-    private readonly IPropertyService _propertyService = propertyService;
-
     /// <summary>
     /// Получает список всех объектов недвижимости
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PropertyDto>>> GetProperties()
+    public async Task<ActionResult<List<PropertyDto>>> GetProperties()
     {
-        var properties = await _propertyService.GetAllPropertiesAsync();
+        var properties = await propertyService.GetAllPropertiesAsync();
         return Ok(properties);
     }
 
@@ -30,7 +28,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult<PropertyDto>> GetProperty(int id)
     {
-        var property = await _propertyService.GetPropertyByIdAsync(id);
+        var property = await propertyService.GetPropertyByIdAsync(id);
         return property is null ? NotFound($"Property with ID {id} not found") : Ok(property);
     }
 
@@ -43,7 +41,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     {
         try
         {
-            var property = await _propertyService.CreatePropertyAsync(propertyDto);
+            var property = await propertyService.CreatePropertyAsync(propertyDto);
             return CreatedAtAction(nameof(GetProperty), new { id = property.Id }, property);
         }
         catch (ArgumentException ex)
@@ -66,7 +64,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     {
         try
         {
-            var property = await _propertyService.UpdatePropertyAsync(id, propertyDto);
+            var property = await propertyService.UpdatePropertyAsync(id, propertyDto);
             return property is null ? NotFound($"Property with ID {id} not found") : Ok(property);
         }
         catch (ArgumentException ex)
@@ -88,7 +86,7 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     {
         try
         {
-            var result = await _propertyService.DeletePropertyAsync(id);
+            var result = await propertyService.DeletePropertyAsync(id);
             return result ? NoContent() : NotFound($"Property with ID {id} not found");
         }
         catch (Exception)

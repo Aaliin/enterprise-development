@@ -11,15 +11,13 @@ namespace EstateAgency.API.Controllers;
 [Route("api/[controller]")]
 public class ClientsController(IClientService clientService) : ControllerBase
 {
-    private readonly IClientService _clientService = clientService;
-
     /// <summary>
     /// Получает список всех клиентов
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetClients()
+    public async Task<ActionResult<List<ClientDto>>> GetClients()
     {
-        var clients = await _clientService.GetAllClientsAsync();
+        var clients = await clientService.GetAllClientsAsync();
         return Ok(clients);
     }
 
@@ -30,7 +28,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ClientDto>> GetClient(int id)
     {
-        var client = await _clientService.GetClientByIdAsync(id);
+        var client = await clientService.GetClientByIdAsync(id);
         return client is null ? NotFound($"Client with ID {id} not found") : Ok(client);
     }
 
@@ -43,7 +41,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     {
         try
         {
-            var client = await _clientService.CreateClientAsync(clientDto);
+            var client = await clientService.CreateClientAsync(clientDto);
             return CreatedAtAction(nameof(GetClient), new { id = client.Id }, client);
         }
         catch (ArgumentException ex)
@@ -66,7 +64,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     {
         try
         {
-            var client = await _clientService.UpdateClientAsync(id, clientDto);
+            var client = await clientService.UpdateClientAsync(id, clientDto);
             return client is null ? NotFound($"Client with ID {id} not found") : Ok(client);
         }
         catch (ArgumentException ex)
@@ -88,7 +86,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
     {
         try
         {
-            var result = await _clientService.DeleteClientAsync(id);
+            var result = await clientService.DeleteClientAsync(id);
             return result ? NoContent() : NotFound($"Client with ID {id} not found");
         }
         catch (Exception)

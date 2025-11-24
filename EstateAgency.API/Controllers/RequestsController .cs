@@ -18,7 +18,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// Получает список всех заявок
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RequestDto>>> GetRequests()
+    public async Task<ActionResult<List<RequestDto>>> GetRequests()
     {
         var requests = await _requestService.GetAllRequestsAsync();
         return Ok(requests);
@@ -104,7 +104,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// <param name="startDate">Начальная дата</param>
     /// <param name="endDate">Конечная дата</param>
     [HttpGet("analytics/sellers-by-period")]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetSellersByPeriod(
+    public async Task<ActionResult<List<ClientDto>>> GetSellersByPeriod(
         [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
     {
         var sellers = await _requestService.GetSellersByPeriodAsync(startDate, endDate);
@@ -116,7 +116,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// </summary>
     /// <param name="topCount">Количество топ клиентов (по умолчанию 5)</param>
     [HttpGet("analytics/top-buyers")]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetTopBuyers([FromQuery] int topCount = 5)
+    public async Task<ActionResult<List<ClientDto>>> GetTopBuyers([FromQuery] int topCount = 5)
     {
         var buyers = await _requestService.GetTopBuyersAsync(topCount);
         return Ok(buyers);
@@ -127,7 +127,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// </summary>
     /// <param name="topCount">Количество топ клиентов (по умолчанию 5)</param>
     [HttpGet("analytics/top-sellers")]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetTopSellers([FromQuery] int topCount = 5)
+    public async Task<ActionResult<List<ClientDto>>> GetTopSellers([FromQuery] int topCount = 5)
     {
         var sellers = await _requestService.GetTopSellersAsync(topCount);
         return Ok(sellers);
@@ -137,7 +137,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// Получить количество заявок по типам недвижимости
     /// </summary>
     [HttpGet("analytics/requests-by-property-type")]
-    public async Task<ActionResult<Dictionary<string, int>>> GetRequestsByPropertyType()
+    public async Task<ActionResult<List<(PropertyType Type, int Count)>>> GetRequestsByPropertyType()
     {
         var counts = await _requestService.GetRequestsCountByPropertyTypeAsync();
         return Ok(counts);
@@ -147,7 +147,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// Получить клиентов с заявками минимальной стоимости
     /// </summary>
     [HttpGet("analytics/clients-with-min-amount")]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetClientsWithMinAmount()
+    public async Task<ActionResult<List<ClientDto>>> GetClientsWithMinAmount()
     {
         var clients = await _requestService.GetClientsWithMinAmountRequestsAsync();
         return Ok(clients);
@@ -158,7 +158,7 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     /// </summary>
     /// <param name="propertyType">Тип недвижимости</param>
     [HttpGet("analytics/clients-by-property-type/{propertyType}")]
-    public async Task<ActionResult<IEnumerable<ClientDto>>> GetClientsByPropertyType(PropertyType propertyType)
+    public async Task<ActionResult<List<ClientDto>>> GetClientsByPropertyType(PropertyType propertyType)
     {
         var clients = await _requestService.GetClientsByPropertyTypeAsync(propertyType);
         return Ok(clients);

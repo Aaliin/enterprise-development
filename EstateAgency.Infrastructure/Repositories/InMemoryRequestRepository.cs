@@ -1,4 +1,4 @@
-﻿using EstateAgency.Domain.Entities;
+﻿﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
 using EstateAgency.Infrastructure.Data;
@@ -64,7 +64,6 @@ public class InMemoryRequestRepository : IRequestRepository
         return request;
     }
 
-
     /// <summary>
     /// Обновляет существующую заявку
     /// </summary>
@@ -91,7 +90,6 @@ public class InMemoryRequestRepository : IRequestRepository
         return existing;
     }
 
-
     /// <summary>
     /// Удаляет заявку по идентификатору
     /// </summary>
@@ -111,7 +109,6 @@ public class InMemoryRequestRepository : IRequestRepository
     /// <param name="id">Идентификатор заявки</param>
     public Task<bool> ExistsAsync(int id) => Task.FromResult(_requests.Any(r => r.Id == id));
 
-
     /// <summary>
     /// Получает продавцов за указанный период
     /// </summary>
@@ -128,7 +125,6 @@ public class InMemoryRequestRepository : IRequestRepository
 
         return Task.FromResult(sellers);
     }
-
 
     /// <summary>
     /// Получает топ-N покупателей по количеству заявок
@@ -147,7 +143,6 @@ public class InMemoryRequestRepository : IRequestRepository
 
         return Task.FromResult(topBuyers);
     }
-
 
     /// <summary>
     /// Получает топ-N продавцов по количеству заявок
