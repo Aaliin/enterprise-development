@@ -1,10 +1,10 @@
 ﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
-using EstateAgency.EF.Data;
+using EstateAgency.Ef.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace EstateAgency.EF.Repositories;
+namespace EstateAgency.Ef.Repositories;
 
 /// <summary>
 /// Репозиторий для работы с объектами недвижимости с использованием Entity Framework
