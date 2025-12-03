@@ -1,7 +1,7 @@
 ﻿using EstateAgency.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace EstateAgency.EF.Data;
+namespace EstateAgency.Ef.Data;
 
 /// <summary>
 /// Определяет модели данных и их конфигурацию для работы с базой данных
