@@ -31,6 +31,11 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<RequestDto>> GetRequest(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Request ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         var request = await _requestService.GetRequestByIdAsync(id);
         return request is null ? NotFound($"Request with ID {id} not found") : Ok(request);
     }
@@ -42,6 +47,10 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RequestDto>> CreateRequest(CreateRequestDto requestDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
             var request = await _requestService.CreateRequestAsync(requestDto);
@@ -49,7 +58,13 @@ public class RequestsController(IRequestService requestService) : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return BadRequest(ModelState);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return Conflict(ModelState);
         }
         catch (Exception)
         {
@@ -65,6 +80,16 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<RequestDto>> UpdateRequest(int id, CreateRequestDto requestDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Request ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var request = await _requestService.UpdateRequestAsync(id, requestDto);
@@ -72,7 +97,13 @@ public class RequestsController(IRequestService requestService) : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return BadRequest(ModelState);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return Conflict(ModelState);
         }
         catch (Exception)
         {
@@ -87,10 +118,20 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteRequest(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Request ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var result = await _requestService.DeleteRequestAsync(id);
             return result ? NoContent() : NotFound($"Request with ID {id} not found");
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return BadRequest(ModelState);
         }
         catch (Exception)
         {
@@ -107,6 +148,11 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     public async Task<ActionResult<List<ClientDto>>> GetSellersByPeriod(
         [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
     {
+        if (startDate > endDate)
+        {
+            ModelState.AddModelError(nameof(startDate), "Start date cannot be after end date");
+            return BadRequest(ModelState);
+        }
         var sellers = await _requestService.GetSellersByPeriodAsync(startDate, endDate);
         return Ok(sellers);
     }
@@ -118,6 +164,11 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpGet("analytics/top-buyers")]
     public async Task<ActionResult<List<ClientDto>>> GetTopBuyers([FromQuery] int topCount = 5)
     {
+        if (topCount <= 0 || topCount > 100)
+        {
+            ModelState.AddModelError(nameof(topCount), "Top count must be between 1 and 100");
+            return BadRequest(ModelState);
+        }
         var buyers = await _requestService.GetTopBuyersAsync(topCount);
         return Ok(buyers);
     }
@@ -129,6 +180,11 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpGet("analytics/top-sellers")]
     public async Task<ActionResult<List<ClientDto>>> GetTopSellers([FromQuery] int topCount = 5)
     {
+        if (topCount <= 0 || topCount > 100)
+        {
+            ModelState.AddModelError(nameof(topCount), "Top count must be between 1 and 100");
+            return BadRequest(ModelState);
+        }
         var sellers = await _requestService.GetTopSellersAsync(topCount);
         return Ok(sellers);
     }
@@ -160,6 +216,11 @@ public class RequestsController(IRequestService requestService) : ControllerBase
     [HttpGet("analytics/clients-by-property-type/{propertyType}")]
     public async Task<ActionResult<List<ClientDto>>> GetClientsByPropertyType(PropertyType propertyType)
     {
+        if (!Enum.IsDefined(typeof(PropertyType), propertyType))
+        {
+            ModelState.AddModelError(nameof(propertyType), "Invalid property type");
+            return BadRequest(ModelState);
+        }
         var clients = await _requestService.GetClientsByPropertyTypeAsync(propertyType);
         return Ok(clients);
     }

@@ -100,9 +100,11 @@ public class EfRequestRepository(EstateAgencyDbContext context) : IRequestReposi
         .Include(r => r.Client)
         .Where(r => r.Type == RequestType.Sale &&
                    r.CreatedDate >= startDate &&
-                   r.CreatedDate <= endDate)
-        .Select(r => r.Client)
+                   r.CreatedDate <= endDate &&
+                   r.Client != null)
+        .Select(r => r.Client!)
         .Distinct()
+        .OrderBy(c => c.FullName)
         .ToListAsync();
 
     /// <summary>
@@ -110,34 +112,32 @@ public class EfRequestRepository(EstateAgencyDbContext context) : IRequestReposi
     /// </summary>
     /// <param name="topCount">Количество возвращаемых топ-покупателей (по умолчанию 5)</param>
     /// <returns>Список клиентов-покупателей с наибольшим количеством заявок на покупку</returns>
-    public async Task<List<Client>> GetTopBuyersAsync(int topCount = 5) => await context.Requests
-        .Where(r => r.Type == RequestType.Purchase)
-        .GroupBy(r => r.ClientId)
-        .Select(g => new { ClientId = g.Key, Count = g.Count() })
-        .OrderByDescending(x => x.Count)
-        .Take(topCount)
-        .Join(context.Clients,
-              grp => grp.ClientId,
-              client => client.Id,
-              (grp, client) => client)
-        .ToListAsync();
+    public async Task<List<Client>> GetTopBuyersAsync(int topCount = 5)
+        => await context.Requests
+            .Include(r => r.Client)
+            .Where(r => r.Type == RequestType.Purchase && r.Client != null)
+            .GroupBy(r => r.Client!)
+            .Select(g => new { Client = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(topCount)
+            .Select(x => x.Client)
+            .ToListAsync();
 
     /// <summary>
     /// Получает список топ-N продавцов по количеству заявок на продажу
     /// </summary>
     /// <param name="topCount">Количество возвращаемых топ-продавцов (по умолчанию 5)</param>
     /// <returns>Список клиентов-продавцов с наибольшим количеством заявок на продажу</returns>
-    public async Task<List<Client>> GetTopSellersAsync(int topCount = 5) => await context.Requests
-        .Where(r => r.Type == RequestType.Sale)
-        .GroupBy(r => r.ClientId)
-        .Select(g => new { ClientId = g.Key, Count = g.Count() })
-        .OrderByDescending(x => x.Count)
-        .Take(topCount)
-        .Join(context.Clients,
-              grp => grp.ClientId,
-              client => client.Id,
-              (grp, client) => client)
-        .ToListAsync();
+    public async Task<List<Client>> GetTopSellersAsync(int topCount = 5)
+        => await context.Requests
+            .Include(r => r.Client)
+            .Where(r => r.Type == RequestType.Sale && r.Client != null)
+            .GroupBy(r => r.Client!)
+            .Select(g => new { Client = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(topCount)
+            .Select(x => x.Client)
+            .ToListAsync();
 
     /// <summary>
     /// Получает статистику количества заявок по типам недвижимости
@@ -147,7 +147,8 @@ public class EfRequestRepository(EstateAgencyDbContext context) : IRequestReposi
     {
         var results = await context.Requests
             .Include(r => r.Property)
-            .GroupBy(r => r.Property.Type)
+            .Where(r => r.Property != null)
+            .GroupBy(r => r.Property!.Type)
             .Select(g => new { Type = g.Key, Count = g.Count() })
             .ToListAsync();
 
@@ -160,11 +161,18 @@ public class EfRequestRepository(EstateAgencyDbContext context) : IRequestReposi
     /// <returns>Список клиентов, у которых есть заявки с минимальной суммой</returns>
     public async Task<List<Client>> GetClientsWithMinAmountRequestsAsync()
     {
-        var minAmount = await context.Requests.MinAsync(r => r.Amount);
+        if (!await context.Requests.AnyAsync())
+        {
+            return [];
+        }
+
+        var minAmount = await context.Requests
+            .MinAsync(r => r.Amount);
+
         return await context.Requests
             .Include(r => r.Client)
-            .Where(r => r.Amount == minAmount)
-            .Select(r => r.Client)
+            .Where(r => r.Amount == minAmount && r.Client != null)
+            .Select(r => r.Client!)
             .Distinct()
             .ToListAsync();
     }
@@ -174,12 +182,16 @@ public class EfRequestRepository(EstateAgencyDbContext context) : IRequestReposi
     /// </summary>
     /// <param name="propertyType">Тип недвижимости для фильтрации</param>
     /// <returns>Список клиентов, отсортированный по полному имени</returns>
-    public async Task<List<Client>> GetClientsByPropertyTypeAsync(PropertyType propertyType) => await context.Requests
-        .Include(r => r.Client)
-        .Include(r => r.Property)
-        .Where(r => r.Property.Type == propertyType && r.Type == RequestType.Purchase)
-        .Select(r => r.Client)
-        .Distinct()
-        .OrderBy(c => c.FullName)
-        .ToListAsync();
+    public async Task<List<Client>> GetClientsByPropertyTypeAsync(PropertyType propertyType)
+        => await context.Requests
+            .Include(r => r.Client)
+            .Include(r => r.Property)
+            .Where(r => r.Type == RequestType.Purchase &&
+                       r.Property != null &&
+                       r.Client != null &&
+                       r.Property.Type == propertyType)
+            .Select(r => r.Client!)
+            .Distinct()
+            .OrderBy(c => c.FullName)
+            .ToListAsync();
 }

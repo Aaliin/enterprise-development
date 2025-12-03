@@ -28,6 +28,11 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult<PropertyDto>> GetProperty(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Property ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         var property = await propertyService.GetPropertyByIdAsync(id);
         return property is null ? NotFound($"Property with ID {id} not found") : Ok(property);
     }
@@ -39,6 +44,10 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     [HttpPost]
     public async Task<ActionResult<PropertyDto>> CreateProperty(CreatePropertyDto propertyDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
             var property = await propertyService.CreatePropertyAsync(propertyDto);
@@ -46,7 +55,13 @@ public class PropertiesController(IPropertyService propertyService) : Controller
         }
         catch (ArgumentException ex)
         {
+            ModelState.AddModelError(string.Empty, ex.Message);
             return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return Conflict(ModelState);
         }
         catch (Exception)
         {
@@ -62,6 +77,16 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     [HttpPut("{id}")]
     public async Task<ActionResult<PropertyDto>> UpdateProperty(int id, CreatePropertyDto propertyDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Property ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var property = await propertyService.UpdatePropertyAsync(id, propertyDto);
@@ -69,7 +94,13 @@ public class PropertiesController(IPropertyService propertyService) : Controller
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return BadRequest(ModelState);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return Conflict(ModelState);
         }
         catch (Exception)
         {
@@ -84,10 +115,20 @@ public class PropertiesController(IPropertyService propertyService) : Controller
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProperty(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Property ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var result = await propertyService.DeletePropertyAsync(id);
             return result ? NoContent() : NotFound($"Property with ID {id} not found");
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return BadRequest(ModelState);
         }
         catch (Exception)
         {

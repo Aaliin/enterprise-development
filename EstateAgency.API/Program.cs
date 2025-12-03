@@ -2,6 +2,7 @@
 using EstateAgency.Application.Services;
 using EstateAgency.Application.Mappings;
 using EstateAgency.Domain.Interfaces;
+using EstateAgency.Domain.Data;
 using EstateAgency.Infrastructure.Repositories; 
 using EstateAgency.EF.Repositories;            
 using EstateAgency.EF.Data;                   
@@ -10,23 +11,21 @@ using EstateAgency.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var useEF = builder.Configuration.GetValue<bool>("UseEF")
-            || builder.Configuration.GetConnectionString("SqlServerConnection") != null;
+var useEf = builder.Configuration.GetValue<bool>("UseEf")
+            || builder.Configuration.GetConnectionString("DefaultConnection") != null;
 
-if (useEF)
+if (useEf)
 {
     Console.WriteLine("Running in EF (Lab 3)");
 
     builder.AddServiceDefaults();
 
     builder.Services.AddDbContext<EstateAgencyDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     builder.Services.AddScoped<IClientRepository, EfClientRepository>();
     builder.Services.AddScoped<IPropertyRepository, EfPropertyRepository>();
     builder.Services.AddScoped<IRequestRepository, EfRequestRepository>();
-
-    builder.Services.AddScoped<DataSeeder>();
 }
 else
 {
@@ -48,7 +47,7 @@ builder.Services.AddScoped<IRequestService, RequestService>();
 
 var app = builder.Build();
 
-if (useEF)
+if (useEf)
 {
     app.MapDefaultEndpoints(); 
 }
@@ -63,14 +62,38 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-if (useEF)
+if (useEf)
 {
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<EstateAgencyDbContext>();
-    await context.Database.EnsureCreatedAsync();  
 
-    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-    await seeder.SeedAsync();
+    try
+    {
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.EnsureCreatedAsync();
+
+        var (clients, properties) = SampleData.GetCompleteTestData();
+
+        await context.Clients.AddRangeAsync(clients);
+        await context.SaveChangesAsync();
+        var savedClients = await context.Clients.OrderBy(c => c.Id).ToListAsync();
+        Console.WriteLine($"Saved {clients.Count} clients");
+
+        await context.Properties.AddRangeAsync(properties);
+        await context.SaveChangesAsync();
+        var savedProperties = await context.Properties.OrderBy(p => p.Id).ToListAsync();
+        Console.WriteLine($"Saved {properties.Count} properties");
+
+        var requests = SampleData.CreateSampleRequests(savedClients, savedProperties);
+        await context.Requests.AddRangeAsync(requests);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"Saved {requests.Count} requests");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error: " + ex.ToString()); 
+        throw; 
+    }
 }
 
 app.Run();

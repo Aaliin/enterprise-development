@@ -28,6 +28,12 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ClientDto>> GetClient(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Client ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
+
         var client = await clientService.GetClientByIdAsync(id);
         return client is null ? NotFound($"Client with ID {id} not found") : Ok(client);
     }
@@ -39,6 +45,10 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ClientDto>> CreateClient(CreateClientDto clientDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         try
         {
             var client = await clientService.CreateClientAsync(clientDto);
@@ -46,6 +56,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
         }
         catch (ArgumentException ex)
         {
+            ModelState.AddModelError(string.Empty, ex.Message);
             return BadRequest(ex.Message);
         }
         catch (Exception)
@@ -62,6 +73,16 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<ClientDto>> UpdateClient(int id, CreateClientDto clientDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Client ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var client = await clientService.UpdateClientAsync(id, clientDto);
@@ -69,6 +90,7 @@ public class ClientsController(IClientService clientService) : ControllerBase
         }
         catch (ArgumentException ex)
         {
+            ModelState.AddModelError(string.Empty, ex.Message);
             return BadRequest(ex.Message);
         }
         catch (Exception)
@@ -84,6 +106,11 @@ public class ClientsController(IClientService clientService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteClient(int id)
     {
+        if (id <= 0)
+        {
+            ModelState.AddModelError(nameof(id), "Client ID must be greater than 0");
+            return BadRequest(ModelState);
+        }
         try
         {
             var result = await clientService.DeleteClientAsync(id);

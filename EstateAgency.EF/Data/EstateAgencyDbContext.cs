@@ -6,19 +6,8 @@ namespace EstateAgency.EF.Data;
 /// <summary>
 /// Определяет модели данных и их конфигурацию для работы с базой данных
 /// </summary>
-public class EstateAgencyDbContext : DbContext
+public class EstateAgencyDbContext(DbContextOptions<EstateAgencyDbContext> options) : DbContext(options)
 {
-    /// <summary>
-    /// Инициализирует новый экземпляр контекста с указанными параметрами
-    /// </summary>
-    /// <param name="options">Параметры настройки контекста базы данных</param>
-    public EstateAgencyDbContext(DbContextOptions<EstateAgencyDbContext> options) : base(options) { }
-
-    /// <summary>
-    /// Инициализирует новый экземпляр контекста без параметров
-    /// </summary>
-    public EstateAgencyDbContext() { }
-
     /// <summary>
     /// Набор данных клиентов агентства недвижимости
     /// </summary>
@@ -35,17 +24,6 @@ public class EstateAgencyDbContext : DbContext
     public DbSet<Request> Requests { get; set; }
 
     /// <summary>
-    /// Настраивает параметры подключения к базе данных
-    /// </summary>
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=EstateAgencyDB;Trusted_Connection=true;TrustServerCertificate=true;");
-        }
-    }
-
-    /// <summary>
     /// Настраивает модели данных и их отношения в базе данных
     /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,6 +34,7 @@ public class EstateAgencyDbContext : DbContext
         modelBuilder.Entity<Client>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
             entity.Property(e => e.PassportNumber).IsRequired().HasMaxLength(20);
             entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
@@ -72,6 +51,7 @@ public class EstateAgencyDbContext : DbContext
         modelBuilder.Entity<Property>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.CadastralNumber).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Address).IsRequired().HasMaxLength(500);
             entity.Property(e => e.TotalArea).HasColumnType("decimal(18,2)");
@@ -97,6 +77,7 @@ public class EstateAgencyDbContext : DbContext
         modelBuilder.Entity<Request>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime2");
 
