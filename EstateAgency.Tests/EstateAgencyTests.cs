@@ -29,7 +29,7 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
             .Where(r => r.Type == RequestType.Sale &&
                        r.CreatedDate >= startDate &&
                        r.CreatedDate <= endDate)
-            .Select(r => r.Client)
+            .Select(r => r.Client!)
             .Distinct()
             .OrderBy(c => c.FullName)
             .ToList();
@@ -55,7 +55,7 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
             .Select(g => new { Client = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
             .Take(5)
-            .Select(x => x.Client)
+            .Select(x => x.Client!)
             .ToList();
 
         var topSellers = _fixture.Requests
@@ -64,7 +64,7 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
             .Select(g => new { Client = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
             .Take(5)
-            .Select(x => x.Client)
+            .Select(x => x.Client!)
             .ToList();
 
         var buyerNames = topBuyers.Select(c => c.FullName).ToList();
@@ -85,15 +85,16 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
         var expectedPropertyTypesCount = 5;
 
         var requestsByType = _fixture.Requests
-            .GroupBy(r => r.Property.Type)
+            .Where(r => r.Property != null) 
+            .GroupBy(r => r.Property!.Type)
             .Select(g => new { PropertyType = g.Key, Count = g.Count() })
             .ToDictionary(x => x.PropertyType, x => x.Count);
 
-        var actualApartmentCount = _fixture.Requests.Count(r => r.Property.Type == PropertyType.Apartment);
-        var actualHouseCount = _fixture.Requests.Count(r => r.Property.Type == PropertyType.House);
-        var actualCommercialCount = _fixture.Requests.Count(r => r.Property.Type == PropertyType.Commercial);
-        var actualLandCount = _fixture.Requests.Count(r => r.Property.Type == PropertyType.Land);
-        var actualVillaCount = _fixture.Requests.Count(r => r.Property.Type == PropertyType.Villa);
+        var actualApartmentCount = _fixture.Requests.Count(r => r.Property != null && r.Property.Type == PropertyType.Apartment);
+        var actualHouseCount = _fixture.Requests.Count(r => r.Property != null && r.Property.Type == PropertyType.House);
+        var actualCommercialCount = _fixture.Requests.Count(r => r.Property != null && r.Property.Type == PropertyType.Commercial);
+        var actualLandCount = _fixture.Requests.Count(r => r.Property != null && r.Property.Type == PropertyType.Land);
+        var actualVillaCount = _fixture.Requests.Count(r => r.Property != null && r.Property.Type == PropertyType.Villa);
 
         Assert.Equal(expectedPropertyTypesCount, requestsByType.Count);
         Assert.Equal(actualApartmentCount, requestsByType[PropertyType.Apartment]);
@@ -124,7 +125,7 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
         var clients = _fixture.Requests
             .Where(r => (r.Type == RequestType.Purchase && r.Amount == minPurchaseAmount) ||
                        (r.Type == RequestType.Sale && r.Amount == minSaleAmount))
-            .Select(r => r.Client)
+            .Select(r => r.Client!)
             .Distinct()
             .ToList();
 
@@ -147,8 +148,10 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
 
         var clients = _fixture.Requests
             .Where(r => r.Type == RequestType.Purchase &&
+                       r.Property != null && 
+                       r.Client != null && 
                        r.Property.Type == propertyType)
-            .Select(r => r.Client)
+            .Select(r => r.Client!)
             .Distinct()
             .OrderBy(c => c.FullName)
             .ToList();

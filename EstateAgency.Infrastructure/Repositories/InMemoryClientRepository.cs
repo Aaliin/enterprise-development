@@ -1,6 +1,6 @@
 ﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Interfaces;
-using EstateAgency.Infrastructure.Data;
+using EstateAgency.Domain.Data;
 
 namespace EstateAgency.Infrastructure.Repositories;
 
@@ -17,7 +17,7 @@ public class InMemoryClientRepository : IClientRepository
     /// </summary>
     public InMemoryClientRepository()
     {
-        var testClients = DataSeeder.GetTestClients();
+        var testClients = SampleData.GetSampleClients();
         _clients.AddRange(testClients);
         _nextId = testClients.Count + 1;
     }
@@ -39,6 +39,10 @@ public class InMemoryClientRepository : IClientRepository
     /// <param name="client">Клиент для добавления</param>
     public Task<Client> AddAsync(Client client)
     {
+        if (_clients.Any(c => c.PassportNumber == client.PassportNumber))
+        {
+            throw new InvalidOperationException("Client with this passport number already exists");
+        }
         client.Id = _nextId++;
         _clients.Add(client);
         return Task.FromResult(client);
@@ -53,6 +57,10 @@ public class InMemoryClientRepository : IClientRepository
         var existing = _clients.FirstOrDefault(c => c.Id == client.Id);
         if (existing == null) return Task.FromResult<Client?>(null);
 
+        if (_clients.Any(c => c.Id != client.Id && c.PassportNumber == client.PassportNumber))
+        {
+            throw new InvalidOperationException("Another client with this passport number already exists");
+        }
         existing.FullName = client.FullName;
         existing.PassportNumber = client.PassportNumber;
         existing.PhoneNumber = client.PhoneNumber;

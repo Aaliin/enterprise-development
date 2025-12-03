@@ -1,6 +1,6 @@
 ﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Interfaces;
-using EstateAgency.Infrastructure.Data;
+using EstateAgency.Domain.Data;
 
 namespace EstateAgency.Infrastructure.Repositories;
 
@@ -17,7 +17,7 @@ public class InMemoryPropertyRepository : IPropertyRepository
     /// </summary>
     public InMemoryPropertyRepository()
     {
-        var testProperties = DataSeeder.GetTestProperties();
+        var testProperties = SampleData.GetSampleProperties();
         _properties.AddRange(testProperties);
         _nextId = testProperties.Count + 1;
     }
@@ -39,6 +39,10 @@ public class InMemoryPropertyRepository : IPropertyRepository
     /// <param name="property">Объект недвижимости для добавления</param>
     public Task<Property> AddAsync(Property property)
     {
+        if (_properties.Any(p => p.CadastralNumber == property.CadastralNumber))
+        {
+            throw new InvalidOperationException("Property with this cadastral number already exists");
+        }
         property.Id = _nextId++;
         _properties.Add(property);
         return Task.FromResult(property);
@@ -52,6 +56,11 @@ public class InMemoryPropertyRepository : IPropertyRepository
     {
         var existing = _properties.FirstOrDefault(p => p.Id == property.Id);
         if (existing == null) return Task.FromResult<Property?>(null);
+
+        if (_properties.Any(p => p.Id != property.Id && p.CadastralNumber == property.CadastralNumber))
+        {
+            throw new InvalidOperationException("Another property with this cadastral number already exists");
+        }
 
         existing.Type = property.Type;
         existing.Purpose = property.Purpose;

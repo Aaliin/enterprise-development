@@ -1,7 +1,7 @@
 ﻿﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
-using EstateAgency.Infrastructure.Data;
+using EstateAgency.Domain.Data;
 
 namespace EstateAgency.Infrastructure.Repositories;
 
@@ -24,13 +24,23 @@ public class InMemoryRequestRepository : IRequestRepository
     {
         _clientRepository = clientRepository;
         _propertyRepository = propertyRepository;
+        InitializeSampleDataAsync().Wait();
+    }
 
-        var clients = DataSeeder.GetTestClients();
-        var properties = DataSeeder.GetTestProperties();
-        var testRequests = DataSeeder.GetTestRequests(clients, properties);
+    /// <summary>
+    /// Инициализирует демонстрационные данные
+    /// </summary>
+    private async Task InitializeSampleDataAsync()
+    {
+        var clients = await _clientRepository.GetAllAsync();
+        var properties = await _propertyRepository.GetAllAsync();
 
-        _requests.AddRange(testRequests);
-        _nextId = testRequests.Count + 1;
+        if (clients.Count != 0 && properties.Count != 0)
+        {
+            var sampleRequests = SampleData.CreateSampleRequests(clients, properties);
+            _requests.AddRange(sampleRequests);
+            _nextId = sampleRequests.Count + 1;
+        }
     }
 
     /// <summary>
@@ -117,8 +127,11 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<Client>> GetSellersByPeriodAsync(DateTime startDate, DateTime endDate)
     {
         var sellers = _requests
-            .Where(r => r.Type == RequestType.Sale && r.CreatedDate >= startDate && r.CreatedDate <= endDate)
-            .Select(r => r.Client)
+        .Where(r => r.Type == RequestType.Sale &&
+                   r.CreatedDate >= startDate &&
+                   r.CreatedDate <= endDate &&
+                   r.Client != null)
+            .Select(r => r.Client!)
             .Distinct()
             .OrderBy(c => c.FullName)
             .ToList();
@@ -133,8 +146,8 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<Client>> GetTopBuyersAsync(int topCount = 5)
     {
         var topBuyers = _requests
-            .Where(r => r.Type == RequestType.Purchase)
-            .GroupBy(r => r.Client)
+            .Where(r => r.Type == RequestType.Purchase && r.Client != null)
+            .GroupBy(r => r.Client!)
             .Select(g => new { Client = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
             .Take(topCount)
@@ -151,8 +164,8 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<Client>> GetTopSellersAsync(int topCount = 5)
     {
         var topSellers = _requests
-            .Where(r => r.Type == RequestType.Sale)
-            .GroupBy(r => r.Client)
+            .Where(r => r.Type == RequestType.Sale && r.Client != null)
+            .GroupBy(r => r.Client!)
             .Select(g => new { Client = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
             .Take(topCount)
@@ -168,7 +181,8 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<(PropertyType Type, int Count)>> GetRequestsCountByPropertyTypeAsync()
     {
         var counts = _requests
-            .GroupBy(r => r.Property.Type)
+            .Where(r => r.Property != null) 
+            .GroupBy(r => r.Property!.Type)
             .Select(g => (Type: g.Key, Count: g.Count()))
             .ToList();
 
@@ -184,9 +198,10 @@ public class InMemoryRequestRepository : IRequestRepository
         var minSale = _requests.Where(r => r.Type == RequestType.Sale).Min(r => r.Amount);
 
         var clients = _requests
-            .Where(r => (r.Type == RequestType.Purchase && r.Amount == minPurchase) ||
+            .Where(r => r.Client != null && 
+                       (r.Type == RequestType.Purchase && r.Amount == minPurchase) ||
                        (r.Type == RequestType.Sale && r.Amount == minSale))
-            .Select(r => r.Client)
+            .Select(r => r.Client!)
             .Distinct()
             .ToList();
 
@@ -200,8 +215,11 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<Client>> GetClientsByPropertyTypeAsync(PropertyType propertyType)
     {
         var clients = _requests
-            .Where(r => r.Type == RequestType.Purchase && r.Property.Type == propertyType)
-            .Select(r => r.Client)
+            .Where(r => r.Type == RequestType.Purchase &&
+                       r.Property != null &&
+                       r.Client != null &&
+                       r.Property.Type == propertyType)
+            .Select(r => r.Client!)
             .Distinct()
             .OrderBy(c => c.FullName)
             .ToList();
