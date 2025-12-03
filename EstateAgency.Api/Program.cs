@@ -4,8 +4,8 @@ using EstateAgency.Application.Mappings;
 using EstateAgency.Domain.Interfaces;
 using EstateAgency.Domain.Data;
 using EstateAgency.Infrastructure.Repositories; 
-using EstateAgency.EF.Repositories;            
-using EstateAgency.EF.Data;                   
+using EstateAgency.Ef.Repositories;            
+using EstateAgency.Ef.Data;                   
 using Microsoft.EntityFrameworkCore;
 using EstateAgency.ServiceDefaults;
 
