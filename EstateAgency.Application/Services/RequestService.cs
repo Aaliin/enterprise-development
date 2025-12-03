@@ -1,4 +1,5 @@
-﻿using EstateAgency.Application.DTOs;
+﻿using AutoMapper;
+using EstateAgency.Application.DTOs;
 using EstateAgency.Application.Interfaces;
 using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
@@ -10,7 +11,8 @@ namespace EstateAgency.Application.Services;
 /// Реализует бизнес-логику работы с заявками на покупку и продажу недвижимости
 /// </summary>
 /// <param name="repository">Репозиторий для доступа к данным агентства недвижимости</param>
-public class RequestService(IRequestRepository repository) : IRequestService
+/// <param name="mapper">AutoMapper для преобразования объектов</param>
+public class RequestService(IRequestRepository repository, IMapper mapper) : IRequestService
 {
     /// <summary>
     /// Получает список всех заявок
@@ -18,17 +20,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<RequestDto>> GetAllRequestsAsync()
     {
         var requests = await repository.GetAllAsync();
-        return [.. requests.Select(r => new RequestDto
-        {
-            Id = r.Id,
-            ClientId = r.ClientId,
-            PropertyId = r.PropertyId,
-            Type = r.Type,
-            Amount = r.Amount,
-            CreatedDate = r.CreatedDate,
-            ClientFullName = r.Client?.FullName ?? string.Empty,
-            PropertyAddress = r.Property?.Address ?? string.Empty
-        })];
+        return mapper.Map<List<RequestDto>>(requests);
     }
 
     /// <summary>
@@ -38,18 +30,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<RequestDto?> GetRequestByIdAsync(int id)
     {
         var request = await repository.GetByIdAsync(id);
-        if (request == null) return null;
-        return new RequestDto
-        {
-            Id = request.Id,
-            ClientId = request.ClientId,
-            PropertyId = request.PropertyId,
-            Type = request.Type,
-            Amount = request.Amount,
-            CreatedDate = request.CreatedDate,
-            ClientFullName = request.Client?.FullName ?? string.Empty,
-            PropertyAddress = request.Property?.Address ?? string.Empty
-        };
+        return mapper.Map<RequestDto?>(request);
     }
 
     /// <summary>
@@ -57,29 +38,13 @@ public class RequestService(IRequestRepository repository) : IRequestService
     /// </summary>
     /// <param name="requestDto">DTO с данными для создания заявки</param> 
     public async Task<RequestDto> CreateRequestAsync(CreateRequestDto requestDto)
-    { 
-        var request = new Request
-        {
-            ClientId = requestDto.ClientId,
-            PropertyId = requestDto.PropertyId,
-            Type = requestDto.Type,
-            Amount = requestDto.Amount,
-            CreatedDate = DateTime.UtcNow,
-        };
+    {
+        var request = mapper.Map<Request>(requestDto);
+        request.CreatedDate = DateTime.UtcNow;
 
         var createdRequest = await repository.AddAsync(request);
-
-        return new RequestDto
-        {
-            Id = createdRequest.Id,
-            ClientId = createdRequest.ClientId,
-            ClientFullName = createdRequest.Client?.FullName ?? string.Empty,
-            PropertyId = createdRequest.PropertyId,
-            PropertyAddress = createdRequest.Property?.Address ?? string.Empty,
-            Type = createdRequest.Type,
-            Amount = createdRequest.Amount,
-            CreatedDate = createdRequest.CreatedDate
-        };
+        var requestWithDetails = await repository.GetByIdAsync(createdRequest.Id);
+        return mapper.Map<RequestDto>(requestWithDetails);
     }
 
     /// <summary>
@@ -92,25 +57,13 @@ public class RequestService(IRequestRepository repository) : IRequestService
         var existingRequest = await repository.GetByIdAsync(id);
         if (existingRequest == null) return null;
 
-        existingRequest.ClientId = requestDto.ClientId;
-        existingRequest.PropertyId = requestDto.PropertyId;
-        existingRequest.Type = requestDto.Type;
-        existingRequest.Amount = requestDto.Amount;
-
+        mapper.Map(requestDto, existingRequest);
         var updatedRequest = await repository.UpdateAsync(existingRequest);
+
         if (updatedRequest == null) return null;
 
-        return new RequestDto
-        {
-            Id = updatedRequest.Id,
-            ClientId = updatedRequest.ClientId,
-            ClientFullName = updatedRequest.Client?.FullName ?? string.Empty,
-            PropertyId = updatedRequest.PropertyId,
-            PropertyAddress = updatedRequest.Property?.Address ?? string.Empty,
-            Type = updatedRequest.Type,
-            Amount = updatedRequest.Amount,
-            CreatedDate = updatedRequest.CreatedDate
-        };
+        var requestWithDetails = await repository.GetByIdAsync(updatedRequest.Id);
+        return mapper.Map<RequestDto>(requestWithDetails);
     }
 
     /// <summary>
@@ -130,13 +83,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<ClientDto>> GetSellersByPeriodAsync(DateTime startDate, DateTime endDate)
     {
         var sellers = await repository.GetSellersByPeriodAsync(startDate, endDate);
-        return [.. sellers.Select(s => new ClientDto
-        {
-            Id = s.Id,
-            FullName = s.FullName,
-            PassportNumber = s.PassportNumber,
-            PhoneNumber = s.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(sellers);
     }
 
     /// <summary>
@@ -146,13 +93,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<ClientDto>> GetTopBuyersAsync(int topCount = 5)
     {
         var buyers = await repository.GetTopBuyersAsync(topCount);
-        return [.. buyers.Select(b => new ClientDto
-        {
-            Id = b.Id,
-            FullName = b.FullName,
-            PassportNumber = b.PassportNumber,
-            PhoneNumber = b.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(buyers);
     }
 
     /// <summary>
@@ -162,13 +103,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<ClientDto>> GetTopSellersAsync(int topCount = 5)
     {
         var sellers = await repository.GetTopSellersAsync(topCount);
-        return [.. sellers.Select(s => new ClientDto
-        {
-            Id = s.Id,
-            FullName = s.FullName,
-            PassportNumber = s.PassportNumber,
-            PhoneNumber = s.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(sellers);
     }
 
     /// <summary>
@@ -185,13 +120,7 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<ClientDto>> GetClientsWithMinAmountRequestsAsync()
     {
         var clients = await repository.GetClientsWithMinAmountRequestsAsync();
-        return [.. clients.Select(c => new ClientDto
-        {
-            Id = c.Id,
-            FullName = c.FullName,
-            PassportNumber = c.PassportNumber,
-            PhoneNumber = c.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(clients);
     }
 
     /// <summary>
@@ -201,12 +130,6 @@ public class RequestService(IRequestRepository repository) : IRequestService
     public async Task<List<ClientDto>> GetClientsByPropertyTypeAsync(PropertyType propertyType)
     {
         var clients = await repository.GetClientsByPropertyTypeAsync(propertyType);
-        return [.. clients.Select(c => new ClientDto
-        {
-            Id = c.Id,
-            FullName = c.FullName,
-            PassportNumber = c.PassportNumber,
-            PhoneNumber = c.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(clients);
     }
 }

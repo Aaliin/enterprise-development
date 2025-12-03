@@ -1,4 +1,5 @@
-﻿using EstateAgency.Application.DTOs;
+﻿using AutoMapper;
+using EstateAgency.Application.DTOs;
 using EstateAgency.Application.Interfaces;
 using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Interfaces;
@@ -9,7 +10,8 @@ namespace EstateAgency.Application.Services;
 /// Реализует бизнес-логику работы с клиентскими данными
 /// </summary>
 /// <param name="repository">Репозиторий для доступа к данным агентства недвижимости</param>
-public class ClientService(IClientRepository repository) : IClientService
+/// <param name="mapper">AutoMapper для преобразования объектов</param>
+public class ClientService(IClientRepository repository, IMapper mapper) : IClientService
 {
     /// <summary>
     /// Получает список всех клиентов
@@ -17,13 +19,7 @@ public class ClientService(IClientRepository repository) : IClientService
     public async Task<List<ClientDto>> GetAllClientsAsync()
     {
         var clients = await repository.GetAllAsync();
-        return [.. clients.Select(c => new ClientDto
-        {
-            Id = c.Id,
-            FullName = c.FullName,
-            PassportNumber = c.PassportNumber,
-            PhoneNumber = c.PhoneNumber
-        })];
+        return mapper.Map<List<ClientDto>>(clients);
     }
 
     /// <summary>
@@ -33,13 +29,7 @@ public class ClientService(IClientRepository repository) : IClientService
     public async Task<ClientDto?> GetClientByIdAsync(int id)
     {
         var client = await repository.GetByIdAsync(id);
-        return client is null ? null : new ClientDto
-        {
-            Id = client.Id,
-            FullName = client.FullName,
-            PassportNumber = client.PassportNumber,
-            PhoneNumber = client.PhoneNumber
-        };
+        return mapper.Map<ClientDto?>(client);
     }
 
     /// <summary>
@@ -48,22 +38,9 @@ public class ClientService(IClientRepository repository) : IClientService
     /// <param name="clientDto">DTO с данными для создания клиента</param> 
     public async Task<ClientDto> CreateClientAsync(CreateClientDto clientDto)
     {
-        var client = new Client
-        {
-            FullName = clientDto.FullName,
-            PassportNumber = clientDto.PassportNumber,
-            PhoneNumber = clientDto.PhoneNumber
-        };
-
+        var client = mapper.Map<Client>(clientDto);
         var createdClient = await repository.AddAsync(client);
-
-        return new ClientDto
-        {
-            Id = createdClient.Id,
-            FullName = createdClient.FullName,
-            PassportNumber = createdClient.PassportNumber,
-            PhoneNumber = createdClient.PhoneNumber
-        };
+        return mapper.Map<ClientDto>(createdClient);
     }
 
     /// <summary>
@@ -76,19 +53,10 @@ public class ClientService(IClientRepository repository) : IClientService
         var existingClient = await repository.GetByIdAsync(id);
         if (existingClient == null) return null;
 
-        existingClient.FullName = clientDto.FullName;
-        existingClient.PassportNumber = clientDto.PassportNumber;
-        existingClient.PhoneNumber = clientDto.PhoneNumber;
-
+        mapper.Map(clientDto, existingClient);
         var updatedClient = await repository.UpdateAsync(existingClient);
 
-        return updatedClient is null ? null : new ClientDto
-        {
-            Id = updatedClient.Id,
-            FullName = updatedClient.FullName,
-            PassportNumber = updatedClient.PassportNumber,
-            PhoneNumber = updatedClient.PhoneNumber
-        };
+        return mapper.Map<ClientDto>(updatedClient);
     }
 
     /// <summary>
