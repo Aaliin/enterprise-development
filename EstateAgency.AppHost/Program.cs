@@ -3,7 +3,7 @@
 var sql = builder.AddSqlServer("SqlServer")
     .AddDatabase("EstateAgencyDb");
 
-builder.AddProject<Projects.EstateAgency_API>("estateagency-api")
+builder.AddProject<Projects.EstateAgency_Api>("estateagency-api")
     .WithReference(sql)
     .WithEnvironment("UseEf", "true")
     .WaitFor(sql);

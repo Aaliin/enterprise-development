@@ -36,6 +36,15 @@ public class EfClientRepository(EstateAgencyDbContext context) : IClientReposito
     }
 
     /// <summary>
+    /// Находит клиента по номеру паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта</param>
+    public async Task<Client?> GetByPassportNumberAsync(string passportNumber)
+    {
+        return await context.Clients.FirstOrDefaultAsync(c => c.PassportNumber == passportNumber);
+    }
+
+    /// <summary>
     /// Обновляет данные существующего клиента
     /// </summary>
     /// <param name="client">Объект клиента с обновленными данными</param>
@@ -75,5 +84,14 @@ public class EfClientRepository(EstateAgencyDbContext context) : IClientReposito
     public async Task<bool> ExistsAsync(int id)
     {
         return await context.Clients.AnyAsync(c => c.Id == id);
+    }
+
+    /// <summary>
+    /// Проверяет существование клиента с указанным номером паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта для проверки</param>
+    public async Task<bool> ExistsByPassportNumberAsync(string passportNumber)
+    {
+        return await context.Clients.AnyAsync(c => c.PassportNumber == passportNumber);
     }
 }

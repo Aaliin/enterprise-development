@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Application.DTOs;
+namespace EstateAgency.Application.Dto;
 
 /// <summary>
 /// Содержит валидационные правила для входящих данных

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Domain", "Esta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Tests", "EstateAgency.Tests\EstateAgency.Tests.csproj", "{8C70C7EF-BC7B-4DE3-A463-D1C0D29823E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.API", "EstateAgency.API\EstateAgency.API.csproj", "{45CE7743-49C8-42A2-B707-DAA3CD832C08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Api", "EstateAgency.API\EstateAgency.Api.csproj", "{45CE7743-49C8-42A2-B707-DAA3CD832C08}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D35F1D7C-58AD-4FC0-907F-2812BD591257} = {D35F1D7C-58AD-4FC0-907F-2812BD591257}
 	EndProjectSection
@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Application", "EstateAgency.Application\EstateAgency.Application.csproj", "{9519E451-C486-4A03-8A62-D3371062961E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.EF", "EstateAgency.EF\EstateAgency.EF.csproj", "{121C97B3-CCD1-40F4-92D1-753AD693A92C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateAgency.Ef", "EstateAgency.Ef\EstateAgency.Ef.csproj", "{121C97B3-CCD1-40F4-92D1-753AD693A92C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8EBC92CD-5B27-4BA9-BC50-1687FFB6867D} = {8EBC92CD-5B27-4BA9-BC50-1687FFB6867D}
 		{9519E451-C486-4A03-8A62-D3371062961E} = {9519E451-C486-4A03-8A62-D3371062961E}

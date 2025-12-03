@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EstateAgency.Application.DTOs;
+﻿namespace EstateAgency.Application.Dto;
 
 /// <summary>
 /// Содержит основные данные клиента и список связанных заявок

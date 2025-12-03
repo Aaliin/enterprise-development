@@ -1,4 +1,5 @@
 ﻿using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
 using EstateAgency.EF.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,27 @@ public class EfPropertyRepository(EstateAgencyDbContext context) : IPropertyRepo
     /// <param name="id">Идентификатор объекта недвижимости</param>
     /// <returns>Найденный объект недвижимости или null, если объект не существует</returns>
     public async Task<Property?> GetByIdAsync(int id) => await context.Properties.FindAsync(id);
+
+    /// <summary>
+    /// Находит объект недвижимости по кадастровому номеру
+    /// </summary>
+    /// <param name="cadastralNumber">Кадастровый номер</param>
+    public async Task<Property?> GetByCadastralNumberAsync(string cadastralNumber)
+    {
+        return await context.Properties
+            .FirstOrDefaultAsync(p => p.CadastralNumber == cadastralNumber);
+    }
+
+    /// <summary>
+    /// Получает список объектов недвижимости по типу
+    /// </summary>
+    /// <param name="type">Тип недвижимости</param>
+    public async Task<List<Property>> GetByTypeAsync(PropertyType type)
+    {
+        return await context.Properties
+            .Where(p => p.Type == type)
+            .ToListAsync();
+    }
 
     /// <summary>
     /// Добавляет новый объект недвижимости в базу данных
@@ -75,5 +97,14 @@ public class EfPropertyRepository(EstateAgencyDbContext context) : IPropertyRepo
     public async Task<bool> ExistsAsync(int id)
     {
         return await context.Properties.AnyAsync(p => p.Id == id);
+    }
+
+    /// <summary>
+    /// Проверяет существование объекта недвижимости с указанным кадастровым номером
+    /// </summary>
+    /// <param name="cadastralNumber">Кадастровый номер для проверки</param>
+    public async Task<bool> ExistsByCadastralNumberAsync(string cadastralNumber)
+    {
+        return await context.Properties.AnyAsync(p => p.CadastralNumber == cadastralNumber);
     }
 }

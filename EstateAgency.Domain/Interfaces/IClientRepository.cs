@@ -25,6 +25,12 @@ public interface IClientRepository
     public Task<Client> AddAsync(Client client);
 
     /// <summary>
+    /// Находит клиента по номеру паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта</param>
+    public Task<Client?> GetByPassportNumberAsync(string passportNumber);
+
+    /// <summary>
     /// Обновляет существующего клиента
     /// </summary>
     /// <param name="client">Клиент с обновленными данными</param>
@@ -41,4 +47,10 @@ public interface IClientRepository
     /// </summary>
     /// <param name="id">Идентификатор клиента</param>
     public Task<bool> ExistsAsync(int id);
+    
+    /// <summary>
+    /// Проверяет существование клиента с указанным номером паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта для проверки</param>
+    public Task<bool> ExistsByPassportNumberAsync(string passportNumber);
 }

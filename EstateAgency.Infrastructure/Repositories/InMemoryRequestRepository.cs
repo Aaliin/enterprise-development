@@ -1,7 +1,8 @@
-﻿﻿using EstateAgency.Domain.Entities;
+﻿using AutoMapper;
+using EstateAgency.Domain.Data;
+﻿using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
-using EstateAgency.Domain.Data;
 
 namespace EstateAgency.Infrastructure.Repositories;
 
@@ -13,6 +14,7 @@ public class InMemoryRequestRepository : IRequestRepository
     private readonly List<Request> _requests = [];
     private readonly IClientRepository _clientRepository;
     private readonly IPropertyRepository _propertyRepository;
+    private readonly IMapper _mapper;
     private int _nextId = 1;
 
     /// <summary>
@@ -20,10 +22,11 @@ public class InMemoryRequestRepository : IRequestRepository
     /// </summary>
     /// <param name="clientRepository">Репозиторий клиентов</param>
     /// <param name="propertyRepository">Репозиторий объектов недвижимости</param>
-    public InMemoryRequestRepository(IClientRepository clientRepository, IPropertyRepository propertyRepository)
+    public InMemoryRequestRepository(IClientRepository clientRepository, IPropertyRepository propertyRepository, IMapper mapper)
     {
         _clientRepository = clientRepository;
         _propertyRepository = propertyRepository;
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         InitializeSampleDataAsync().Wait();
     }
 
@@ -89,11 +92,7 @@ public class InMemoryRequestRepository : IRequestRepository
         if (client == null) throw new ArgumentException("Client not found");
         if (property == null) throw new ArgumentException("Property not found");
 
-        existing.ClientId = request.ClientId;
-        existing.PropertyId = request.PropertyId;
-        existing.Type = request.Type;
-        existing.Amount = request.Amount;
-        existing.CreatedDate = request.CreatedDate;
+        _mapper.Map(request, existing);
         existing.Client = client;
         existing.Property = property;
 

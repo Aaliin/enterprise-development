@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Dto;
 using EstateAgency.Domain.Entities; 
 
 namespace EstateAgency.Application.Mappings;

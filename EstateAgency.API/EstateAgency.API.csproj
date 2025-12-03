@@ -19,7 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EstateAgency.Application\EstateAgency.Application.csproj" />
 	  <ProjectReference Include="..\EstateAgency.Domain\EstateAgency.Domain.csproj" />
-	  <ProjectReference Include="..\EstateAgency.EF\EstateAgency.EF.csproj" />
+	  <ProjectReference Include="..\EstateAgency.Ef\EstateAgency.Ef.csproj" />
     <ProjectReference Include="..\EstateAgency.Infrastructure\EstateAgency.Infrastructure.csproj" />
 	  <ProjectReference Include="..\EstateAgency.ServiceDefaults\EstateAgency.ServiceDefaults.csproj" />
   </ItemGroup>

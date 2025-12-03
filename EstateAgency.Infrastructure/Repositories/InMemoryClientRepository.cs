@@ -1,6 +1,7 @@
-﻿using EstateAgency.Domain.Entities;
-using EstateAgency.Domain.Interfaces;
+﻿using AutoMapper;
 using EstateAgency.Domain.Data;
+using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Interfaces;
 
 namespace EstateAgency.Infrastructure.Repositories;
 
@@ -10,13 +11,15 @@ namespace EstateAgency.Infrastructure.Repositories;
 public class InMemoryClientRepository : IClientRepository
 {
     private readonly List<Client> _clients = [];
+    private readonly IMapper _mapper;
     private int _nextId = 1;
 
     /// <summary>
     /// Инициализирует новый экземпляр репозитория в памяти
     /// </summary>
-    public InMemoryClientRepository()
+    public InMemoryClientRepository(IMapper mapper)
     {
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         var testClients = SampleData.GetSampleClients();
         _clients.AddRange(testClients);
         _nextId = testClients.Count + 1;
@@ -32,6 +35,17 @@ public class InMemoryClientRepository : IClientRepository
     /// </summary>
     /// <param name="id">Идентификатор клиента</param>
     public Task<Client?> GetByIdAsync(int id) => Task.FromResult(_clients.FirstOrDefault(c => c.Id == id));
+
+    /// <summary>
+    /// Находит клиента по номеру паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта</param>
+    public Task<Client?> GetByPassportNumberAsync(string passportNumber)
+    {
+        var client = _clients.FirstOrDefault(c =>
+            string.Equals(c.PassportNumber, passportNumber, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(client);
+    }
 
     /// <summary>
     /// Добавляет нового клиента
@@ -61,10 +75,7 @@ public class InMemoryClientRepository : IClientRepository
         {
             throw new InvalidOperationException("Another client with this passport number already exists");
         }
-        existing.FullName = client.FullName;
-        existing.PassportNumber = client.PassportNumber;
-        existing.PhoneNumber = client.PhoneNumber;
-
+        _mapper.Map(client, existing);
         return Task.FromResult<Client?>(existing);
     }
 
@@ -86,4 +97,15 @@ public class InMemoryClientRepository : IClientRepository
     /// </summary>
     /// <param name="id">Идентификатор клиента</param>
     public Task<bool> ExistsAsync(int id) => Task.FromResult(_clients.Any(c => c.Id == id));
+
+    /// <summary>
+    /// Проверяет существование клиента с указанным номером паспорта
+    /// </summary>
+    /// <param name="passportNumber">Номер паспорта для проверки</param>
+    public Task<bool> ExistsByPassportNumberAsync(string passportNumber)
+    {
+        var exists = _clients.Any(c =>
+            string.Equals(c.PassportNumber, passportNumber, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(exists);
+    }
 }

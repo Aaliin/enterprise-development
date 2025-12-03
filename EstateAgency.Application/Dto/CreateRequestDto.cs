@@ -1,7 +1,7 @@
 ﻿using EstateAgency.Domain.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace EstateAgency.Application.DTOs;
+namespace EstateAgency.Application.Dto;
 
 /// <summary> 
 /// Содержит валидационные правила для финансовых данных и связей 

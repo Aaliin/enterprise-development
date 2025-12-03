@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EstateAgency.Application.DTOs;
+using EstateAgency.Application.Dto;
 using EstateAgency.Application.Interfaces;
 using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
@@ -39,6 +39,8 @@ public class RequestService(IRequestRepository repository, IMapper mapper) : IRe
     /// <param name="requestDto">DTO с данными для создания заявки</param> 
     public async Task<RequestDto> CreateRequestAsync(CreateRequestDto requestDto)
     {
+        ArgumentNullException.ThrowIfNull(requestDto);
+
         var request = mapper.Map<Request>(requestDto);
         request.CreatedDate = DateTime.UtcNow;
 
@@ -54,6 +56,8 @@ public class RequestService(IRequestRepository repository, IMapper mapper) : IRe
     /// <param name="requestDto">DTO с обновленными данными заявки</param> 
     public async Task<RequestDto?> UpdateRequestAsync(int id, CreateRequestDto requestDto)
     {
+        ArgumentNullException.ThrowIfNull(requestDto);
+
         var existingRequest = await repository.GetByIdAsync(id);
         if (existingRequest == null) return null;
 
@@ -82,6 +86,9 @@ public class RequestService(IRequestRepository repository, IMapper mapper) : IRe
     /// <param name="endDate">Конечная дата периода</param>
     public async Task<List<ClientDto>> GetSellersByPeriodAsync(DateTime startDate, DateTime endDate)
     {
+        if (startDate > endDate)
+            throw new ArgumentException("Start date must be before or equal to end date");
+        
         var sellers = await repository.GetSellersByPeriodAsync(startDate, endDate);
         return mapper.Map<List<ClientDto>>(sellers);
     }
@@ -102,6 +109,9 @@ public class RequestService(IRequestRepository repository, IMapper mapper) : IRe
     /// <param name="topCount">Количество продавцов для возврата</param>
     public async Task<List<ClientDto>> GetTopSellersAsync(int topCount = 5)
     {
+        if (topCount <= 0)
+            throw new ArgumentException("Top count must be greater than 0", nameof(topCount));
+
         var sellers = await repository.GetTopSellersAsync(topCount);
         return mapper.Map<List<ClientDto>>(sellers);
     }

@@ -1,4 +1,5 @@
 ﻿using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Enum;
 
 namespace EstateAgency.Domain.Interfaces;
 
@@ -17,6 +18,20 @@ public interface IPropertyRepository
     /// </summary>
     /// <param name="id">Идентификатор объекта недвижимости</param>
     public Task<Property?> GetByIdAsync(int id);
+
+    /// <summary>
+    /// Находит объект недвижимости по кадастровому номеру
+    /// </summary>
+    /// <param name="cadastralNumber">Кадастровый номер</param>
+    /// <returns>Найденный объект или null, если объект не существует</returns>
+    public Task<Property?> GetByCadastralNumberAsync(string cadastralNumber);
+
+    /// <summary>
+    /// Получает список объектов недвижимости по типу
+    /// </summary>
+    /// <param name="type">Тип недвижимости</param>
+    /// <returns>Список объектов недвижимости указанного типа</returns>
+    public Task<List<Property>> GetByTypeAsync(PropertyType type);
 
     /// <summary>
     /// Добавляет новый объект недвижимости
@@ -41,4 +56,10 @@ public interface IPropertyRepository
     /// </summary>
     /// <param name="id">Идентификатор объекта недвижимости</param>
     public Task<bool> ExistsAsync(int id);
+
+    /// <summary>
+    /// Проверяет существование объекта недвижимости с указанным кадастровым номером
+    /// </summary>
+    /// <param name="cadastralNumber">Кадастровый номер для проверки</param>
+    public Task<bool> ExistsByCadastralNumberAsync(string cadastralNumber);
 }
