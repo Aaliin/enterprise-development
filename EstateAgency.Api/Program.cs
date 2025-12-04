@@ -1,13 +1,13 @@
 ﻿using EstateAgency.Application.Interfaces;
-using EstateAgency.Application.Services;
 using EstateAgency.Application.Mappings;
-using EstateAgency.Domain.Interfaces;
+using EstateAgency.Application.Services;
 using EstateAgency.Domain.Data;
-using EstateAgency.Infrastructure.Repositories; 
-using EstateAgency.Ef.Repositories;            
-using EstateAgency.Ef.Data;                   
-using Microsoft.EntityFrameworkCore;
+using EstateAgency.Domain.Interfaces;
+using EstateAgency.Ef.Data;
+using EstateAgency.Ef.Repositories;
+using EstateAgency.Infrastructure.Repositories;
 using EstateAgency.ServiceDefaults;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +49,7 @@ var app = builder.Build();
 
 if (useEf)
 {
-    app.MapDefaultEndpoints(); 
+    app.MapDefaultEndpoints();
 }
 
 if (app.Environment.IsDevelopment())
@@ -91,8 +91,8 @@ if (useEf)
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Error: " + ex.ToString()); 
-        throw; 
+        Console.WriteLine("Error: " + ex.ToString());
+        throw;
     }
 }
 

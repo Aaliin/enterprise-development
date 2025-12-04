@@ -1,5 +1,4 @@
 ﻿using EstateAgency.Application.Dto;
-using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 
 namespace EstateAgency.Application.Interfaces;

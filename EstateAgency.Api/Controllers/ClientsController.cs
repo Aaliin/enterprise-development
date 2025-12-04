@@ -1,5 +1,5 @@
 ﻿using EstateAgency.Application.Dto;
-using EstateAgency.Application.Interfaces; 
+using EstateAgency.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateAgency.Api.Controllers;

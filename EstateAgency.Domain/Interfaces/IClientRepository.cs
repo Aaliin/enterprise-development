@@ -47,7 +47,6 @@ public interface IClientRepository
     /// </summary>
     /// <param name="id">Идентификатор клиента</param>
     public Task<bool> ExistsAsync(int id);
-    
     /// <summary>
     /// Проверяет существование клиента с указанным номером паспорта
     /// </summary>

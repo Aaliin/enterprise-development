@@ -88,7 +88,7 @@ public class RequestService(IRequestRepository repository, IMapper mapper) : IRe
     {
         if (startDate > endDate)
             throw new ArgumentException("Start date must be before or equal to end date");
-        
+
         var sellers = await repository.GetSellersByPeriodAsync(startDate, endDate);
         return mapper.Map<List<ClientDto>>(sellers);
     }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using EstateAgency.Domain.Data;
-﻿using EstateAgency.Domain.Entities;
+using EstateAgency.Domain.Entities;
 using EstateAgency.Domain.Enum;
 using EstateAgency.Domain.Interfaces;
 
@@ -50,13 +50,13 @@ public class InMemoryRequestRepository : IRequestRepository
     /// Получает все заявки
     /// </summary>
     public Task<List<Request>> GetAllAsync() => Task.FromResult(_requests.ToList());
-    
+
     /// <summary>
     /// Получает заявку по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор заявки</param>
     public Task<Request?> GetByIdAsync(int id) => Task.FromResult(_requests.FirstOrDefault(r => r.Id == id));
-    
+
     /// <summary>
     /// Добавляет новую заявку
     /// </summary>
@@ -180,7 +180,7 @@ public class InMemoryRequestRepository : IRequestRepository
     public Task<List<(PropertyType Type, int Count)>> GetRequestsCountByPropertyTypeAsync()
     {
         var counts = _requests
-            .Where(r => r.Property != null) 
+            .Where(r => r.Property != null)
             .GroupBy(r => r.Property!.Type)
             .Select(g => (Type: g.Key, Count: g.Count()))
             .ToList();
@@ -197,7 +197,7 @@ public class InMemoryRequestRepository : IRequestRepository
         var minSale = _requests.Where(r => r.Type == RequestType.Sale).Min(r => r.Amount);
 
         var clients = _requests
-            .Where(r => r.Client != null && 
+            .Where(r => r.Client != null &&
                        (r.Type == RequestType.Purchase && r.Amount == minPurchase) ||
                        (r.Type == RequestType.Sale && r.Amount == minSale))
             .Select(r => r.Client!)

@@ -1,6 +1,6 @@
-﻿using EstateAgency.Domain.Enum;
-using EstateAgency.Application.Dto;
-using EstateAgency.Application.Interfaces; 
+﻿using EstateAgency.Application.Dto;
+using EstateAgency.Application.Interfaces;
+using EstateAgency.Domain.Enum;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateAgency.Api.Controllers;

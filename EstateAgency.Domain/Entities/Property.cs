@@ -17,7 +17,7 @@ public class Property
     /// Тип объекта недвижимости 
     /// </summary>
     [Required(ErrorMessage = "Тип недвижимости обязателен")]
-    public required  PropertyType Type { get; set; }
+    public required PropertyType Type { get; set; }
 
     /// <summary>
     /// Назначение объекта 

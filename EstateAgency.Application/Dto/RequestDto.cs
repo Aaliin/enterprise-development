@@ -30,7 +30,7 @@ public class RequestDto
     /// <summary>
     /// Адрес объекта недвижимости
     /// </summary>
-    public required string PropertyAddress { get; set; } 
+    public required string PropertyAddress { get; set; }
 
     /// <summary>
     /// Тип заявки  

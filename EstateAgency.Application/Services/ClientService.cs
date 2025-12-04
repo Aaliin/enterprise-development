@@ -72,7 +72,7 @@ public class ClientService(IClientRepository repository, IMapper mapper) : IClie
     public async Task<ClientDto?> UpdateClientAsync(int id, CreateClientDto clientDto)
     {
         ArgumentNullException.ThrowIfNull(clientDto);
-        
+
         var existingClient = await repository.GetByIdAsync(id);
         if (existingClient == null)
             return null;

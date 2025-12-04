@@ -85,7 +85,7 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
         var expectedPropertyTypesCount = 5;
 
         var requestsByType = _fixture.Requests
-            .Where(r => r.Property != null) 
+            .Where(r => r.Property != null)
             .GroupBy(r => r.Property!.Type)
             .Select(g => new { PropertyType = g.Key, Count = g.Count() })
             .ToDictionary(x => x.PropertyType, x => x.Count);
@@ -148,8 +148,8 @@ public class EstateAgencyTests(TestDataFixture _fixture) : IClassFixture<TestDat
 
         var clients = _fixture.Requests
             .Where(r => r.Type == RequestType.Purchase &&
-                       r.Property != null && 
-                       r.Client != null && 
+                       r.Property != null &&
+                       r.Client != null &&
                        r.Property.Type == propertyType)
             .Select(r => r.Client!)
             .Distinct()
