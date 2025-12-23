@@ -22,6 +22,7 @@
 	  <ProjectReference Include="..\EstateAgency.Ef\EstateAgency.Ef.csproj" />
     <ProjectReference Include="..\EstateAgency.Infrastructure\EstateAgency.Infrastructure.csproj" />
 	  <ProjectReference Include="..\EstateAgency.ServiceDefaults\EstateAgency.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\EstateAgency.ContractGenerator\EstateAgency.ContractGenerator.csproj" />
   </ItemGroup>
 
 </Project>
