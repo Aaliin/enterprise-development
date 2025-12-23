@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.1" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.5.2" />
   
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,10 +14,12 @@
     <PackageReference Include="Aspire.Hosting" Version="9.5.2" />
 	  <PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.2" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.5.2" />
+    <PackageReference Include="Aspire.Hosting.Nats" Version="9.5.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EstateAgency.Api\EstateAgency.Api.csproj" />
+    <ProjectReference Include="..\EstateAgency.ContractGenerator\EstateAgency.ContractGenerator.csproj" />
   </ItemGroup>
 
 </Project>

@@ -28,7 +28,7 @@ public class NatsConsumerService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Starting NATS Consumer Service");
-        
+
         await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         try
         {
@@ -104,7 +104,7 @@ public class NatsConsumerService(
             }
 
             var amount = amountProp.GetDecimal();
-            var type = typeProp.GetInt32(); 
+            var type = typeProp.GetInt32();
             var createdDate = root.TryGetProperty("createdDate", out var dateProp)
                 ? dateProp.GetDateTime()
                 : DateTime.UtcNow;
