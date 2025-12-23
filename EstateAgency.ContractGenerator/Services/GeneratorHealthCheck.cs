@@ -30,6 +30,8 @@ public class GeneratorHealthCheck(INatsPublisher natsPublisher, ILogger<Generato
                 ["service"] = "ContractGenerator"
             };
 
+            await Task.Delay(100, cancellationToken);
+
             if (_natsPublisher.IsConnected)
             {
                 _logger.LogDebug("Health check: NATS connection established");

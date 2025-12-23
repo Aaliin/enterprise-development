@@ -49,11 +49,6 @@ if (useNats)
 
     var natsConfigSection = builder.Configuration.GetSection("Nats");
     var natsUrl = natsConfigSection["Url"] ?? "nats://localhost:4222";
-    var natsUser = natsConfigSection["User"];
-    var natsPassword = natsConfigSection["Password"];
-
-    Console.WriteLine($"NATS URL: {natsUrl}");
-    Console.WriteLine($"NATS User: {natsUser}");
 
     builder.Services.AddSingleton<INatsConnection>(serviceProvider =>
     {
@@ -67,19 +62,6 @@ if (useNats)
             Name = "EstateAgency.Api",
             Echo = false
         };
-
-        if (!string.IsNullOrEmpty(natsUser) && !string.IsNullOrEmpty(natsPassword))
-        {
-            opts = opts with
-            {
-                AuthOpts = NatsAuthOpts.Default with
-                {
-                    Username = natsUser,
-                    Password = natsPassword
-                }
-            };
-            logger.LogInformation("Using NATS authentication");
-        }
 
         var connection = new NatsConnection(opts);
 
